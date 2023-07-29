@@ -1,0 +1,227 @@
+export const DataKH = [
+  {
+    id: 1,
+    name: 'Fall 2023',
+  },
+  {
+    id: 2,
+    name: 'Summer 2023',
+  },
+  {
+    id: 3,
+    name: 'Spring 2023',
+  },
+  {
+    id: 4,
+    name: 'Fall 2022',
+  },
+  {
+    id: 5,
+    name: 'Summer 2022',
+  },
+  {
+    id: 6,
+    name: 'Spring 2022',
+  },
+  {
+    id: 7,
+    name: 'Fall 2021',
+  },
+  {
+    id: 8,
+    name: 'Summer 2021',
+  },
+  {
+    id: 9,
+    name: 'Spring 2021',
+  },
+];
+
+export const DataDS = [
+  {
+    id: 1,
+    name: 'Lập trình Mobile đa nền tảng (MOB306) - MD18102',
+    score: 'Điểm trung bình:',
+    score2: '8.3',
+    status: 'Trạng thái:',
+    status2: 'Passed',
+    next: require('../../../../../media/img/more_than_50px.png'),
+  },
+  {
+    id: 2,
+    name: 'Lập trình game 2D (GAM307) - MD18102',
+    score: 'Điểm trung bình:',
+    score2: '9.3',
+    status: 'Trạng thái:',
+    status2: 'Passed',
+    next: require('../../../../../media/img/more_than_50px.png'),
+  },
+  {
+    id: 3,
+    name: 'Lập trình server cho Android (MOB308) - MD18102',
+    score: 'Điểm trung bình:',
+    score2: '0.0',
+    status: 'Trạng thái:',
+    status2: 'Đang học',
+    next: require('../../../../../media/img/more_than_50px.png'),
+  },
+  {
+    id: 4,
+    name: 'Lập trình server cho Android (MOB308) - MD18102',
+    score: 'Điểm trung bình:',
+    score2: '0.0',
+    status: 'Trạng thái:',
+    status2: 'Đang học',
+    next: require('../../../../../media/img/more_than_50px.png'),
+  },
+  {
+    id: 5,
+    name: 'Lập trình server cho Android (MOB308) - MD18102',
+    score: 'Điểm trung bình:',
+    score2: '0.0',
+    status: 'Trạng thái:',
+    status2: 'Đang học',
+    next: require('../../../../../media/img/more_than_50px.png'),
+  },
+  {
+    id: 6,
+    name: 'Lập trình server cho Android (MOB308) - MD18102',
+    score: 'Điểm trung bình:',
+    score2: '0.0',
+    status: 'Trạng thái:',
+    status2: 'Đang học',
+    next: require('../../../../../media/img/more_than_50px.png'),
+  },
+];
+
+export const DataLS = [
+  {
+    id: 1,
+    name: 'Fall 2021',
+    subject: 'Tin học',
+    status: 'Đạt',
+    next: require('../../../../../media/img/more_than_50px.png'),
+  },
+  {
+    id: 2,
+    name: 'Spring 2022',
+    subject: 'Lập trình cơ sở với JavaScript',
+    status: 'Đạt',
+    next: require('../../../../../media/img/more_than_50px.png'),
+  },
+  {
+    id: 3,
+    name: 'Fall 2021',
+    subject: 'Xây dựng trang web',
+    status: 'Đạt',
+    next: require('../../../../../media/img/more_than_50px.png'),
+  },
+  {
+    id: 4,
+    name: 'Fall 2021',
+    subject: 'Tiếng Anh 1.1',
+    status: 'Đạt',
+    next: require('../../../../../media/img/more_than_50px.png'),
+  },
+  {
+    id: 5,
+    name: 'Spring 2022',
+    subject: 'Lập trình Java 1',
+    status: 'Đạt',
+    next: require('../../../../../media/img/more_than_50px.png'),
+  },
+  {
+    id: 6,
+    name: 'Summer 2021',
+    subject: 'Nhập môn lập trình',
+    status: 'Đạt',
+    next: require('../../../../../media/img/more_than_50px.png'),
+  },
+  {
+    id: 7,
+    name: 'Summer 2021',
+    subject: 'Nhập môn lập trình',
+    status: 'Đạt',
+    next: require('../../../../../media/img/more_than_50px.png'),
+  },
+  {
+    id: 8,
+    name: 'Summer 2021',
+    subject: 'Nhập môn lập trình',
+    status: 'Đạt',
+    next: require('../../../../../media/img/more_than_50px.png'),
+  },
+  {
+    id: 9,
+    name: 'Summer 2021',
+    subject: 'Nhập môn lập trình',
+    status: 'Đạt',
+    next: require('../../../../../media/img/more_than_50px.png'),
+  },
+];
+
+export const DataBD = [
+  {
+    id: 1,
+    name: 'Fall 2021',
+    subject: 'Tin học',
+    status: '0.0',
+    next: require('../../../../../media/img/more_than_50px.png'),
+  },
+  {
+    id: 2,
+    name: 'Spring 2022',
+    subject: 'Lập trình cơ sở với JavaScript',
+    status: 'Đạt',
+    next: require('../../../../../media/img/more_than_50px.png'),
+  },
+  {
+    id: 3,
+    name: 'Fall 2021',
+    subject: 'Xây dựng trang web',
+    status: 'Đạt',
+    next: require('../../../../../media/img/more_than_50px.png'),
+  },
+  {
+    id: 4,
+    name: 'Fall 2021',
+    subject: 'Tiếng Anh 1.1',
+    status: 'Đạt',
+    next: require('../../../../../media/img/more_than_50px.png'),
+  },
+  {
+    id: 5,
+    name: 'Spring 2022',
+    subject: 'Lập trình Java 1',
+    status: 'Đạt',
+    next: require('../../../../../media/img/more_than_50px.png'),
+  },
+  {
+    id: 6,
+    name: 'Summer 2021',
+    subject: 'Nhập môn lập trình',
+    status: 'Đạt',
+    next: require('../../../../../media/img/more_than_50px.png'),
+  },
+  {
+    id: 7,
+    name: 'Summer 2021',
+    subject: 'Nhập môn lập trình',
+    status: 'Đạt',
+    next: require('../../../../../media/img/more_than_50px.png'),
+  },
+  {
+    id: 8,
+    name: 'Summer 2021',
+    subject: 'Nhập môn lập trình',
+    status: 'Đạt',
+    next: require('../../../../../media/img/more_than_50px.png'),
+  },
+  {
+    id: 9,
+    name: 'Summer 2021',
+    subject: 'Nhập môn lập trình',
+    status: 'Đạt',
+    next: require('../../../../../media/img/more_than_50px.png'),
+  },
+];
