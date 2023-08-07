@@ -57,8 +57,8 @@ const signIn = async () => {
 const LoginScreens = props => {
   const {navigation} = props;
 
-  const [email, setEmail] = useState('trung@gmail.com');
-  const [password, setPassword] = useState('123');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const {onLogin} = useContext(UserContext);
   const [isShowPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
