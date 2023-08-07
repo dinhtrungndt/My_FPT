@@ -7,14 +7,18 @@ import {
   FlatList,
   Alert,
 } from 'react-native';
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 
 import ModalDropdown from 'react-native-modal-dropdown';
 
 import {DataDD} from './Data';
+4;
+import {UserContext} from '../../../user/UserContext';
 
 const DiemDanhScreens = props => {
   const {navigation} = props;
+  const {user} = useContext(UserContext);
+  const [loading, setLoading] = useState(true);
 
   const menuOptions = [
     'Thông tin cá nhân',
@@ -54,10 +58,6 @@ const DiemDanhScreens = props => {
     );
   };
 
-  const diemDanh = () => {
-    Alert.alert('Bạn đang ở trang điểm danh');
-  };
-
   const [selectedDay, setSelectedDay] = useState('');
 
   const getScheduleForSelectedDay = selectedDay => {
@@ -66,263 +66,282 @@ const DiemDanhScreens = props => {
   };
 
   useEffect(() => {
+    setTimeout(() => {
+      setLoading(false);
+    }, 1000);
+
     setSelectedDay('Điểm danh');
   }, []);
 
   return (
-    <View style={styles.T}>
-      {/* header */}
-      <View style={styles.header}>
-        {/* Điểm danh */}
+    <View>
+      {loading ? (
         <View
           style={{
-            width: '100%',
-            flexDirection: 'row',
-            marginLeft: 20,
-            justifyContent: 'space-between',
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: '100%',
+            paddingTop: 50,
           }}>
-          {/* Back */}
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Image
-              style={{top: 20, width: 20, height: 20}}
-              source={require('../../../../../media/img/back_25px.png')}
-            />
-          </TouchableOpacity>
-          {/* Tài khoản */}
-          <Text
-            style={{
-              height: 30,
-              fontSize: 18,
-              fontWeight: 'bold',
-              marginTop: 15,
-              marginLeft: 20,
-              textAlign: 'center',
-              color: '#FF8E3C',
-            }}>
-            Điểm danh
-          </Text>
-          <View style={{flexDirection: 'row', marginRight: 25}}>
+          <Image
+            style={{width: 100, paddingLeft: 80}}
+            source={require('../../../../../media/img/loading_ly.gif')}
+          />
+        </View>
+      ) : (
+        <View style={styles.T}>
+          {/* header */}
+          <View style={styles.header}>
             {/* Điểm danh */}
-            <TouchableOpacity onPress={diemDanh}>
-              <Image
-                style={{top: 15}}
-                source={require('../../../../../media/img/attendance.png')}
-              />
-            </TouchableOpacity>
-            {/* Thông báo */}
-            <TouchableOpacity
-              onPress={() => navigation.navigate('ThongBaoScreens')}>
-              <Image
-                style={{top: 15, marginLeft: 5}}
-                source={require('../../../../../media/img/notification.png')}
-              />
-            </TouchableOpacity>
-            {/* 3 chấm */}
-            <View>
-              <View>
-                <ModalDropdown
-                  options={menuOptions}
-                  renderRow={renderMenuRow}
-                  defaultIndex={0}
-                  dropdownStyle={{
-                    width: 180,
-                    height: 190,
-                    marginTop: 10,
-                    borderWidth: 1,
-                    borderColor: '#FF8E3C',
-                    padding: 10,
-                  }}>
+            <View
+              style={{
+                width: '100%',
+                flexDirection: 'row',
+                marginLeft: 20,
+                justifyContent: 'space-between',
+              }}>
+              {/* Back */}
+              <TouchableOpacity onPress={() => navigation.goBack()}>
+                <Image
+                  style={{top: 20, width: 20, height: 20}}
+                  source={require('../../../../../media/img/back_25px.png')}
+                />
+              </TouchableOpacity>
+              {/* Tài khoản */}
+              <Text
+                style={{
+                  height: 30,
+                  fontSize: 18,
+                  fontWeight: 'bold',
+                  marginTop: 15,
+                  marginLeft: 80,
+                  textAlign: 'center',
+                  color: '#FF8E3C',
+                }}>
+                Điểm danh
+              </Text>
+              <View style={{flexDirection: 'row', marginRight: 25}}>
+                {/* Thông báo */}
+                <TouchableOpacity
+                  onPress={() => navigation.navigate('ThongBaoScreens')}>
                   <Image
-                    style={{top: 15}}
-                    source={require('../../../../../media/img/menu_logout.png')}
+                    style={{top: 15, marginLeft: 35}}
+                    source={require('../../../../../media/img/notification.png')}
                   />
-                </ModalDropdown>
+                </TouchableOpacity>
+                {/* 3 chấm */}
+                <View style={{marginLeft: 10}}>
+                  <ModalDropdown
+                    options={menuOptions}
+                    renderRow={renderMenuRow}
+                    defaultIndex={0}
+                    dropdownStyle={{
+                      width: 180,
+                      height: 220,
+                      marginTop: 10,
+                      borderWidth: 1,
+                      borderColor: '#FF8E3C',
+                      padding: 10,
+                    }}>
+                    <Image
+                      style={{top: 15}}
+                      source={require('../../../../../media/img/menu_logout.png')}
+                    />
+                  </ModalDropdown>
+                </View>
               </View>
             </View>
           </View>
-        </View>
-      </View>
-      {/* Body */}
-      <View style={styles.body}>
-        {/* Danh sách Horizontal điểm danh */}
-        <FlatList
-          horizontal={true}
-          showsHorizontalScrollIndicator={false}
-          style={{
-            marginTop: 30,
-          }}
-          data={DataDD}
-          renderItem={({item}) => (
-            <TouchableOpacity
-              onPress={() => setSelectedDay(item.name)}
+          {/* Body */}
+          <View style={styles.body}>
+            {/* Danh sách Horizontal điểm danh */}
+            <FlatList
+              horizontal={true}
+              showsHorizontalScrollIndicator={false}
               style={{
-                width: 160,
-                height: 30,
-                borderColor: 'red',
-                backgroundColor: selectedDay === item.name ? '#FF8E3C' : '#fff',
-                borderRadius: 16,
-                marginLeft: 20,
-                marginBottom: 30,
-              }}>
-              <Text
-                style={{
-                  fontSize: 13,
-                  fontFamily: 'Roboto',
-                  fontWeight: 'bold',
-                  marginTop: 5,
-                  textAlign: 'center',
-                  color: selectedDay === item.name ? '#fff' : '#949494',
-                }}>
-                {item.name}
-              </Text>
-              <Text
-                style={{
-                  fontSize: 20,
-                  fontFamily: 'Roboto',
-                  fontWeight: 'bold',
-                  marginBottom: 7,
-                  textAlign: 'center',
-                  color: selectedDay === item.name ? '#fff' : '#000',
-                }}>
-                {item.ngay}
-              </Text>
-            </TouchableOpacity>
-          )}
-          keyExtractor={(item, index) => index.toString()}
-        />
-        {/* Danh sách đã điểm danh */}
-        {selectedDay === 'Điểm danh' && (
-          <FlatList
-            data={getScheduleForSelectedDay(selectedDay)}
-            showsVerticalScrollIndicator={false}
-            style={{height: 600}}
-            renderItem={({item}) => (
-              <View
-                style={{
-                  width: '100%',
-                  height: 70,
-                  flexDirection: 'row',
-                  borderWidth: 1,
-                  borderColor: '#FF8E3C',
-                  borderRadius: 10,
-                  marginBottom: 15,
-                }}>
-                {/* Avatar */}
-                <View
+                marginTop: 30,
+              }}
+              data={DataDD}
+              renderItem={({item}) => (
+                <TouchableOpacity
+                  onPress={() => setSelectedDay(item.name)}
                   style={{
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    marginLeft: 10,
+                    width: 160,
+                    height: 30,
+                    borderColor: 'red',
+                    backgroundColor:
+                      selectedDay === item.name ? '#FF8E3C' : '#fff',
+                    borderRadius: 16,
+                    marginLeft: 20,
+                    marginBottom: 30,
                   }}>
-                  <Image style={{width: 50, height: 50}} source={item.image} />
-                </View>
-                {/* Title */}
-                <View
-                  style={{
-                    width: 300,
-                    height: 100,
-                    marginLeft: 15,
-                    marginTop: 5,
-                  }}>
-                  <Text
-                    style={{
-                      fontSize: 14,
-                      fontFamily: 'Roboto',
-                      color: '#949494',
-                    }}>
-                    {item.title}
-                  </Text>
                   <Text
                     style={{
                       fontSize: 13,
                       fontFamily: 'Roboto',
                       fontWeight: 'bold',
-                      paddingTop: 2,
-                      color: '#000',
+                      marginTop: 5,
+                      textAlign: 'center',
+                      color: selectedDay === item.name ? '#fff' : '#949494',
                     }}>
-                    {item.date}
+                    {item.name}
                   </Text>
                   <Text
                     style={{
-                      fontSize: 13,
-                      fontFamily: 'Roboto',
-                      color: '#949494',
-                    }}>
-                    {item.time}
-                  </Text>
-                </View>
-              </View>
-            )}
-            keyExtractor={(item, index) => index.toString()}
-          />
-        )}
-        {/* Danh sách chưa điểm danh */}
-        {selectedDay === 'Chưa điểm danh' && (
-          <FlatList
-            data={getScheduleForSelectedDay(selectedDay)}
-            showsVerticalScrollIndicator={false}
-            style={{height: 600}}
-            renderItem={({item}) => (
-              <View
-                style={{
-                  width: '100%',
-                  height: 70,
-                  flexDirection: 'row',
-                  borderWidth: 1,
-                  borderColor: '#FF8E3C',
-                  borderRadius: 10,
-                  marginBottom: 15,
-                }}>
-                {/* Avatar */}
-                <View
-                  style={{
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    marginLeft: 10,
-                  }}>
-                  <Image style={{width: 50, height: 50}} source={item.image} />
-                </View>
-                {/* Title */}
-                <View
-                  style={{
-                    width: 300,
-                    height: 100,
-                    marginLeft: 15,
-                    marginTop: 5,
-                  }}>
-                  <Text
-                    style={{
-                      fontSize: 14,
-                      fontFamily: 'Roboto',
-                      color: '#949494',
-                    }}>
-                    {item.title}
-                  </Text>
-                  <Text
-                    style={{
-                      fontSize: 13,
+                      fontSize: 20,
                       fontFamily: 'Roboto',
                       fontWeight: 'bold',
-                      paddingTop: 2,
-                      color: '#000',
+                      marginBottom: 7,
+                      textAlign: 'center',
+                      color: selectedDay === item.name ? '#fff' : '#000',
                     }}>
-                    {item.date}
+                    {item.ngay}
                   </Text>
-                  <Text
+                </TouchableOpacity>
+              )}
+              keyExtractor={(item, index) => index.toString()}
+            />
+            {/* Danh sách đã điểm danh */}
+            {selectedDay === 'Điểm danh' && (
+              <FlatList
+                data={getScheduleForSelectedDay(selectedDay)}
+                showsVerticalScrollIndicator={false}
+                style={{height: 600}}
+                renderItem={({item}) => (
+                  <View
                     style={{
-                      fontSize: 13,
-                      fontFamily: 'Roboto',
-                      color: '#949494',
+                      width: '100%',
+                      height: 70,
+                      flexDirection: 'row',
+                      borderWidth: 1,
+                      borderColor: '#FF8E3C',
+                      borderRadius: 10,
+                      marginBottom: 15,
                     }}>
-                    {item.time}
-                  </Text>
-                </View>
-              </View>
+                    {/* Avatar */}
+                    <View
+                      style={{
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        marginLeft: 10,
+                      }}>
+                      <Image
+                        style={{width: 50, height: 50, borderRadius: 50 / 2}}
+                        source={{uri: user.user.img}}
+                      />
+                    </View>
+                    {/* Title */}
+                    <View
+                      style={{
+                        width: 300,
+                        height: 100,
+                        marginLeft: 15,
+                        marginTop: 5,
+                      }}>
+                      <Text
+                        style={{
+                          fontSize: 14,
+                          fontFamily: 'Roboto',
+                          color: '#949494',
+                        }}>
+                        {item.title}
+                      </Text>
+                      <Text
+                        style={{
+                          fontSize: 13,
+                          fontFamily: 'Roboto',
+                          fontWeight: 'bold',
+                          paddingTop: 2,
+                          color: '#000',
+                        }}>
+                        {item.date}
+                      </Text>
+                      <Text
+                        style={{
+                          fontSize: 13,
+                          fontFamily: 'Roboto',
+                          color: '#949494',
+                        }}>
+                        {item.time}
+                      </Text>
+                    </View>
+                  </View>
+                )}
+                keyExtractor={(item, index) => index.toString()}
+              />
             )}
-            keyExtractor={(item, index) => index.toString()}
-          />
-        )}
-      </View>
+            {/* Danh sách chưa điểm danh */}
+            {selectedDay === 'Chưa điểm danh' && (
+              <FlatList
+                data={getScheduleForSelectedDay(selectedDay)}
+                showsVerticalScrollIndicator={false}
+                style={{height: 600}}
+                renderItem={({item}) => (
+                  <View
+                    style={{
+                      width: '100%',
+                      height: 70,
+                      flexDirection: 'row',
+                      borderWidth: 1,
+                      borderColor: '#FF8E3C',
+                      borderRadius: 10,
+                      marginBottom: 15,
+                    }}>
+                    {/* Avatar */}
+                    <View
+                      style={{
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        marginLeft: 10,
+                      }}>
+                      <Image
+                        style={{width: 50, height: 50, borderRadius: 50 / 2}}
+                        source={{uri: user.user.img}}
+                      />
+                    </View>
+                    {/* Title */}
+                    <View
+                      style={{
+                        width: 300,
+                        height: 100,
+                        marginLeft: 15,
+                        marginTop: 5,
+                      }}>
+                      <Text
+                        style={{
+                          fontSize: 14,
+                          fontFamily: 'Roboto',
+                          color: '#949494',
+                        }}>
+                        {item.title}
+                      </Text>
+                      <Text
+                        style={{
+                          fontSize: 13,
+                          fontFamily: 'Roboto',
+                          fontWeight: 'bold',
+                          paddingTop: 2,
+                          color: '#000',
+                        }}>
+                        {item.date}
+                      </Text>
+                      <Text
+                        style={{
+                          fontSize: 13,
+                          fontFamily: 'Roboto',
+                          color: '#949494',
+                        }}>
+                        {item.time}
+                      </Text>
+                    </View>
+                  </View>
+                )}
+                keyExtractor={(item, index) => index.toString()}
+              />
+            )}
+          </View>
+        </View>
+      )}
     </View>
   );
 };

@@ -92,7 +92,7 @@ export const DataHT = [
     post: 'Người đăng: nhuntq20',
     imgND: require('../../../../../media/img/teacher_HT_25px.png'),
     date: 'Thời gian: 20/07/2023 11:47',
-    imgDate: require('../../../../../media/img/schedule_25px.png'),
+    imgDate: require('../../../../../media/img/time_25px.png'),
   },
   {
     title:
@@ -101,7 +101,7 @@ export const DataHT = [
     post: 'Người đăng: nhuntq20',
     imgND: require('../../../../../media/img/teacher_HT_25px.png'),
     date: 'Thời gian: 20/07/2023 11:47',
-    imgDate: require('../../../../../media/img/schedule_25px.png'),
+    imgDate: require('../../../../../media/img/time_25px.png'),
   },
   {
     title:
@@ -110,7 +110,7 @@ export const DataHT = [
     post: 'Người đăng: nhuntq20',
     imgND: require('../../../../../media/img/teacher_HT_25px.png'),
     date: 'Thời gian: 20/07/2023 11:47',
-    imgDate: require('../../../../../media/img/schedule_25px.png'),
+    imgDate: require('../../../../../media/img/time_25px.png'),
   },
   {
     title:
@@ -119,7 +119,7 @@ export const DataHT = [
     post: 'Người đăng: nhuntq20',
     imgND: require('../../../../../media/img/teacher_HT_25px.png'),
     date: 'Thời gian: 20/07/2023 11:47',
-    imgDate: require('../../../../../media/img/schedule_25px.png'),
+    imgDate: require('../../../../../media/img/time_25px.png'),
   },
   {
     title:
@@ -128,7 +128,7 @@ export const DataHT = [
     post: 'Người đăng: nhuntq20',
     imgND: require('../../../../../media/img/teacher_HT_25px.png'),
     date: 'Thời gian: 20/07/2023 11:47',
-    imgDate: require('../../../../../media/img/schedule_25px.png'),
+    imgDate: require('../../../../../media/img/time_25px.png'),
   },
   {
     title:
@@ -137,7 +137,7 @@ export const DataHT = [
     post: 'Người đăng: nhuntq20',
     imgND: require('../../../../../media/img/teacher_HT_25px.png'),
     date: 'Thời gian: 20/07/2023 11:47',
-    imgDate: require('../../../../../media/img/schedule_25px.png'),
+    imgDate: require('../../../../../media/img/time_25px.png'),
   },
   {
     title:
@@ -146,7 +146,7 @@ export const DataHT = [
     post: 'Người đăng: nhuntq20',
     imgND: require('../../../../../media/img/teacher_HT_25px.png'),
     date: 'Thời gian: 20/07/2023 11:47',
-    imgDate: require('../../../../../media/img/schedule_25px.png'),
+    imgDate: require('../../../../../media/img/time_25px.png'),
   },
 ];
 
@@ -158,7 +158,7 @@ export const DataHD = [
     post: 'Người đăng: nhuntq20',
     imgND: require('../../../../../media/img/teacher_HT_25px.png'),
     date: 'Thời gian: 20/07/2023 11:47',
-    imgDate: require('../../../../../media/img/schedule_25px.png'),
+    imgDate: require('../../../../../media/img/time_25px.png'),
   },
   {
     title:
@@ -167,7 +167,7 @@ export const DataHD = [
     post: 'Người đăng: nhuntq20',
     imgND: require('../../../../../media/img/teacher_HT_25px.png'),
     date: 'Thời gian: 20/07/2023 11:47',
-    imgDate: require('../../../../../media/img/schedule_25px.png'),
+    imgDate: require('../../../../../media/img/time_25px.png'),
   },
   {
     title:
@@ -176,7 +176,7 @@ export const DataHD = [
     post: 'Người đăng: nhuntq20',
     imgND: require('../../../../../media/img/teacher_HT_25px.png'),
     date: 'Thời gian: 20/07/2023 11:47',
-    imgDate: require('../../../../../media/img/schedule_25px.png'),
+    imgDate: require('../../../../../media/img/time_25px.png'),
   },
   {
     title:
@@ -185,7 +185,7 @@ export const DataHD = [
     post: 'Người đăng: nhuntq20',
     imgND: require('../../../../../media/img/teacher_HT_25px.png'),
     date: 'Thời gian: 20/07/2023 11:47',
-    imgDate: require('../../../../../media/img/schedule_25px.png'),
+    imgDate: require('../../../../../media/img/time_25px.png'),
   },
   {
     title:
@@ -194,7 +194,7 @@ export const DataHD = [
     post: 'Người đăng: nhuntq20',
     imgND: require('../../../../../media/img/teacher_HT_25px.png'),
     date: 'Thời gian: 20/07/2023 11:47',
-    imgDate: require('../../../../../media/img/schedule_25px.png'),
+    imgDate: require('../../../../../media/img/time_25px.png'),
   },
   {
     title:
@@ -203,7 +203,7 @@ export const DataHD = [
     post: 'Người đăng: nhuntq20',
     imgND: require('../../../../../media/img/teacher_HT_25px.png'),
     date: 'Thời gian: 20/07/2023 11:47',
-    imgDate: require('../../../../../media/img/schedule_25px.png'),
+    imgDate: require('../../../../../media/img/time_25px.png'),
   },
 ];
 
@@ -215,7 +215,7 @@ export const DataHP = [
     post: 'Người đăng: nhuntq20',
     imgND: require('../../../../../media/img/teacher_HT_25px.png'),
     date: 'Thời gian: 20/07/2023 11:47',
-    imgDate: require('../../../../../media/img/schedule_25px.png'),
+    imgDate: require('../../../../../media/img/time_25px.png'),
   },
   {
     title:
@@ -224,7 +224,7 @@ export const DataHP = [
     post: 'Người đăng: nhuntq20',
     imgND: require('../../../../../media/img/teacher_HT_25px.png'),
     date: 'Thời gian: 20/07/2023 11:47',
-    imgDate: require('../../../../../media/img/schedule_25px.png'),
+    imgDate: require('../../../../../media/img/time_25px.png'),
   },
   {
     title:
@@ -233,7 +233,7 @@ export const DataHP = [
     post: 'Người đăng: nhuntq20',
     imgND: require('../../../../../media/img/teacher_HT_25px.png'),
     date: 'Thời gian: 20/07/2023 11:47',
-    imgDate: require('../../../../../media/img/schedule_25px.png'),
+    imgDate: require('../../../../../media/img/time_25px.png'),
   },
   {
     title:
@@ -242,7 +242,7 @@ export const DataHP = [
     post: 'Người đăng: nhuntq20',
     imgND: require('../../../../../media/img/teacher_HT_25px.png'),
     date: 'Thời gian: 20/07/2023 11:47',
-    imgDate: require('../../../../../media/img/schedule_25px.png'),
+    imgDate: require('../../../../../media/img/time_25px.png'),
   },
   {
     title:
@@ -251,7 +251,7 @@ export const DataHP = [
     post: 'Người đăng: nhuntq20',
     imgND: require('../../../../../media/img/teacher_HT_25px.png'),
     date: 'Thời gian: 20/07/2023 11:47',
-    imgDate: require('../../../../../media/img/schedule_25px.png'),
+    imgDate: require('../../../../../media/img/time_25px.png'),
   },
   {
     title:
@@ -260,6 +260,6 @@ export const DataHP = [
     post: 'Người đăng: nhuntq20',
     imgND: require('../../../../../media/img/teacher_HT_25px.png'),
     date: 'Thời gian: 20/07/2023 11:47',
-    imgDate: require('../../../../../media/img/schedule_25px.png'),
+    imgDate: require('../../../../../media/img/time_25px.png'),
   },
 ];

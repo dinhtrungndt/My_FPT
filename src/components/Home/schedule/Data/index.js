@@ -1,63 +1,65 @@
+import {getMonHoc} from '../../homeService';
+
 export const DataTNHori = [
-  {
-    thu: 'HAI',
-    ngay: '24',
-  },
-  {
-    thu: 'BA',
-    ngay: '25',
-  },
-  {
-    thu: 'TƯ',
-    ngay: '26',
-  },
-  {
-    thu: 'NĂM',
-    ngay: '27',
-  },
-  {
-    thu: 'SÁU',
-    ngay: '28',
-  },
-  {
-    thu: 'BẢY',
-    ngay: '29',
-  },
-  {
-    thu: 'CN',
-    ngay: '30',
-  },
   {
     thu: 'HAI',
     ngay: '31',
   },
   {
     thu: 'BA',
-    ngay: '32',
+    ngay: '1',
   },
   {
     thu: 'TƯ',
-    ngay: '33',
+    ngay: '2',
   },
   {
     thu: 'NĂM',
-    ngay: '34',
+    ngay: '3',
   },
   {
     thu: 'SÁU',
-    ngay: '35',
+    ngay: '4',
   },
   {
     thu: 'BẢY',
-    ngay: '36',
-  },
-  {
-    thu: 'BẢY',
-    ngay: '37',
+    ngay: '5',
   },
   {
     thu: 'CN',
-    ngay: '38',
+    ngay: '6',
+  },
+  {
+    thu: 'HAI',
+    ngay: '7',
+  },
+  {
+    thu: 'BA',
+    ngay: '8',
+  },
+  {
+    thu: 'TƯ',
+    ngay: '9',
+  },
+  {
+    thu: 'NĂM',
+    ngay: '10',
+  },
+  {
+    thu: 'SÁU',
+    ngay: '11',
+  },
+  {
+    thu: 'BẢY',
+    ngay: '12',
+  },
+  {
+    thu: 'CN',
+    ngay: '13',
+  },
+  {
+    thu: 'HAI',
+    ngay: '14',
   },
 ];
 
@@ -100,7 +102,7 @@ const DataLHHAI = [
   },
 ];
 
-DataTNHori.find(item => item.ngay === '24').dataLH = DataLHHAI;
+DataTNHori.find(item => item.ngay === '4').dataLH = DataLHHAI;
 
 const DataLHBA = [
   {
@@ -123,7 +125,7 @@ const DataLHBA = [
   },
 ];
 
-DataTNHori.find(item => item.ngay === '25').dataLH = DataLHBA;
+DataTNHori.find(item => item.ngay === '5').dataLH = DataLHBA;
 
 const DataLHTU = [
   {
@@ -164,7 +166,7 @@ const DataLHTU = [
   },
 ];
 
-DataTNHori.find(item => item.ngay === '26').dataLH = DataLHTU;
+DataTNHori.find(item => item.ngay === '6').dataLH = DataLHTU;
 
 const DataLHNAM = [
   {
@@ -178,4 +180,4 @@ const DataLHNAM = [
   },
 ];
 
-DataTNHori.find(item => item.ngay === '27').dataLH = DataLHNAM;
+DataTNHori.find(item => item.ngay === '7').dataLH = DataLHNAM;

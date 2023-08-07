@@ -15,6 +15,13 @@ export const login = async (email, password) => {
   }
 };
 
+// Update thông tin cá nhân
+export const editUser = async (id, data) => {
+  const response = await AxiosInstance().put(`/login/update-login/${id}`, data);
+  console.log('response:', response);
+  return response.data;
+};
+
 // export const editUser = async data => {
 //   try {
 //     const res = await AxiosInstance().post('/users/update-profile', data);

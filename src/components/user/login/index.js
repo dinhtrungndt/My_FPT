@@ -6,6 +6,7 @@ import {
   Image,
   TextInput,
   Alert,
+  Modal,
 } from 'react-native';
 
 import React, {useState, useContext} from 'react';
@@ -27,6 +28,17 @@ const signIn = async () => {
     console.log('Start Google Sign-In');
     const userInfo = await GoogleSignin.signIn();
     console.log('Google Sign-In Success:', userInfo);
+
+    // Gọi hàm onLogin để kiểm tra hoặc đăng ký tài khoản người dùng với thông tin Google
+    const result = await onLogin(userInfo.user.email, 'google_password');
+    console.log('result', result);
+
+    if (result) {
+      // Lưu thông tin đăng nhập vào AsyncStorage khi đăng nhập thành công
+      await AsyncStorage.setItem('userEmail', userInfo.user.email);
+      await AsyncStorage.setItem('userPassword', 'google_password');
+    }
+
     navigation.navigate('HomeTabBottom');
   } catch (error) {
     console.log('Google Sign-In Error:', error);
@@ -46,14 +58,24 @@ const LoginScreens = props => {
   const {navigation} = props;
 
   const [email, setEmail] = useState('trung@gmail.com');
-  const [password, setPassword] = useState('1');
+  const [password, setPassword] = useState('123');
   const {onLogin} = useContext(UserContext);
   const [isShowPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [loginError, setLoginError] = useState(false);
   const [loginErrorText, setLoginErrorText] = useState('');
+  const [isDialogVisible, setDialogVisible] = useState(false);
+
+  const handleToggleDialog = () => {
+    setDialogVisible(!isDialogVisible);
+  };
 
   const onLoginPress = async () => {
+    // Kiểm tra nếu người dùng chưa chọn cơ sở
+    if (!selectedLocation) {
+      Alert.alert('Vui lòng chọn cơ sở đào tạo trước khi đăng nhập');
+      return;
+    }
     setLoading(true);
     const result = await onLogin(email, password);
     if (!result) {
@@ -76,7 +98,6 @@ const LoginScreens = props => {
         console.log('Lỗi khi lưu thông tin đăng nhập:', error);
       }
     }
-    setLoading(false);
   };
 
   const fptPolytechnicLocations = [
@@ -91,13 +112,10 @@ const LoginScreens = props => {
   const [isListVisible, setListVisible] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState(null);
 
-  const handleToggleList = () => {
-    setListVisible(!isListVisible);
-  };
-
   const handleSelectLocation = location => {
     setSelectedLocation(location);
     setListVisible(false);
+    setDialogVisible(false);
   };
 
   return (
@@ -138,6 +156,68 @@ const LoginScreens = props => {
           }}>
           Đăng nhập
         </Text>
+        {/* Chọn cơ sở đào tạo */}
+        <TouchableOpacity
+          style={{
+            height: 45,
+            marginTop: 30,
+            borderWidth: 1,
+            borderColor: '#FF8E3C',
+            borderRadius: 20,
+            padding: 10,
+            zIndex: 5,
+          }}>
+          <TouchableOpacity onPress={handleToggleDialog}>
+            <Text
+              style={{
+                fontSize: 16,
+                color: selectedLocation ? 'red' : '#FF8E3C',
+                textAlign: 'center',
+              }}>
+              {selectedLocation ? selectedLocation : 'Chọn cơ sở đào tạo'}
+            </Text>
+          </TouchableOpacity>
+          {/* Add the dialog */}
+          <Modal
+            visible={isDialogVisible}
+            animationType="side"
+            transparent={true}
+            onRequestClose={handleToggleDialog}>
+            {/* Add the content of the dialog here */}
+            <View style={styles.dialogContainer}>
+              <Text style={styles.dialogTitle}>Chọn cơ sở đào tạo</Text>
+              {fptPolytechnicLocations.map((location, index) => (
+                <TouchableOpacity
+                  key={index}
+                  onPress={() => handleSelectLocation(location)}>
+                  <Text style={styles.locationItem}>{location}</Text>
+                </TouchableOpacity>
+              ))}
+              <TouchableOpacity
+                style={{
+                  backgroundColor: '#FF8E3C',
+                  width: 120,
+                  height: 40,
+                  borderRadius: 20,
+                  marginLeft: 120,
+                  marginTop: 5,
+                  textAlign: 'center',
+                  shadowColor: '#000',
+                  shadowOffset: {
+                    width: 0,
+                    height: 2,
+                  },
+                  shadowOpacity: 0.25,
+                  shadowRadius: 3.84,
+                  elevation: 5,
+                }}
+                onPress={handleToggleDialog}>
+                <Text style={styles.dialogCancelButton}>Hủy</Text>
+              </TouchableOpacity>
+            </View>
+          </Modal>
+        </TouchableOpacity>
+
         {/* email */}
         <Text
           style={{
@@ -154,7 +234,7 @@ const LoginScreens = props => {
             width: 20,
             height: 20,
             position: 'absolute',
-            top: 277,
+            top: 353,
             left: 45,
           }}
           source={require('../../../../media/img/Email_25px.png')}
@@ -164,7 +244,7 @@ const LoginScreens = props => {
             width: 1,
             height: 20,
             position: 'absolute',
-            top: 277,
+            top: 355,
             left: 80,
             backgroundColor: '#FF8E3C',
           }}
@@ -173,7 +253,7 @@ const LoginScreens = props => {
           value={email}
           onChangeText={setEmail}
           keyboardType="email-address"
-          placeholder="Enter your email"
+          placeholder="Nhập email của bạn"
           style={[
             styles.inputField,
             {borderColor: loginError ? 'red' : '#FF8E3C'},
@@ -195,7 +275,7 @@ const LoginScreens = props => {
             width: 20,
             height: 20,
             position: 'absolute',
-            top: 358,
+            top: 435,
             left: 45,
           }}
           source={require('../../../../media/img/lock_25px.png')}
@@ -205,7 +285,7 @@ const LoginScreens = props => {
             width: 1,
             height: 20,
             position: 'absolute',
-            top: 358,
+            top: 435,
             left: 80,
             backgroundColor: '#FF8E3C',
           }}
@@ -214,7 +294,7 @@ const LoginScreens = props => {
           value={password}
           onChangeText={setPassword}
           secureTextEntry={!isShowPassword}
-          placeholder="Enter your password"
+          placeholder="Nhập password của bạn"
           style={[
             styles.inputField,
             {borderColor: loginError ? 'red' : '#FF8E3C'},
@@ -225,7 +305,7 @@ const LoginScreens = props => {
         <TouchableOpacity
           style={{
             position: 'absolute',
-            top: 358,
+            top: 435,
             right: 45,
           }}
           onPress={() => setShowPassword(!isShowPassword)}>
@@ -242,44 +322,11 @@ const LoginScreens = props => {
           />
         </TouchableOpacity>
 
-        {/* Chọn cơ sở đào tạo */}
-        <TouchableOpacity
-          style={{
-            height: 45,
-            marginTop: 30,
-            borderWidth: 1,
-            borderColor: '#FF8E3C',
-            borderRadius: 20,
-            padding: 10,
-          }}>
-          <TouchableOpacity onPress={handleToggleList}>
-            <Text
-              style={{
-                fontSize: 16,
-                color: '#FF8E3C',
-                textAlign: 'center',
-              }}>
-              {selectedLocation ? selectedLocation : 'Chọn cơ sở đào tạo'}
-            </Text>
-          </TouchableOpacity>
-          {isListVisible && (
-            <View style={styles.dropdown}>
-              {fptPolytechnicLocations.map((location, index) => (
-                <TouchableOpacity
-                  key={index}
-                  onPress={() => handleSelectLocation(location)}>
-                  <Text style={styles.locationItem}>{location}</Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-          )}
-        </TouchableOpacity>
-
         {/* Đăng nhập */}
         <TouchableOpacity
           style={{
             height: 55,
-            marginTop: 30,
+            marginTop: 45,
             backgroundColor: '#FF8E3C',
             borderRadius: 5,
             padding: 10,
@@ -337,6 +384,33 @@ export default LoginScreens;
 
 const styles = StyleSheet.create({
   // body
+  dialogContainer: {
+    position: 'absolute',
+    bottom: 0,
+    width: '100%',
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#FF8E3C',
+    paddingVertical: 20,
+    paddingHorizontal: 10,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    elevation: 10,
+  },
+  dialogTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#FF8E3C',
+    textAlign: 'center',
+    marginBottom: 10,
+    textDecorationLine: 'underline',
+  },
+  dialogCancelButton: {
+    fontSize: 16,
+    color: '#fff',
+    textAlign: 'center',
+    marginTop: 10,
+  },
   errorText: {
     color: 'red',
     marginTop: 5,

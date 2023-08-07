@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useContext, useEffect} from 'react';
 import {
   View,
   Text,
@@ -11,13 +11,31 @@ import {
 
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 import SelectDropdown from 'react-native-select-dropdown';
+import themContext from '../../../../../theme/themeContext';
 
 import {DataKH} from '../Data';
 import {DataDS} from '../Data';
 import {DataLS} from '../Data';
 import {DataBD} from '../Data';
+import {GetKyHoc} from '../../homeService';
+import {getLichSu} from '../../homeService';
 
 const KyHocScreen = () => {
+  const theme = useContext(themContext);
+  const [bangDiem, setBangDiem] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const onGetKyHoc = async () => {
+    setLoading(true);
+    const res = await GetKyHoc();
+    setBangDiem(res);
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    onGetKyHoc();
+  }, []);
+
   const countries = [
     'Fall 2023',
     'Summer 2023',
@@ -37,221 +55,284 @@ const KyHocScreen = () => {
 
   return (
     <View>
-      {/* Header */}
-      <View style={styles.header}>
-        <SelectDropdown
-          showsVerticalScrollIndicator={false}
-          data={countries}
-          buttonStyle={styles.buttonStyle}
-          buttonTextStyle={styles.buttonTextStyle}
-          dropdownStyle={styles.dropdownStyle}
-          dropdownTextStyle={styles.dropdownTextStyle}
-          rowTextStyle={{color: '#FF8E3C'}}
-          defaultButtonText={countries[defaultIndex]}
-          onSelect={(selectedItem, index) => {
-            console.log(selectedItem, index);
-          }}
-        />
-      </View>
-      {/* Body */}
-      <View style={styles.body}>
-        {/* Danh sách Kỳ Học */}
-        <FlatList
-          showsVerticalScrollIndicator={false}
-          data={DataDS}
+      {loading ? (
+        <View
           style={{
-            marginTop: 30,
-            height: 500,
-          }}
-          keyExtractor={item => item.id}
-          renderItem={({item}) => (
-            <View
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: '100%',
+            paddingTop: 50,
+          }}>
+          <Image
+            style={{width: 100, paddingLeft: 80}}
+            source={require('../../../../../media/img/loading_ly.gif')}
+          />
+        </View>
+      ) : (
+        <View style={{backgroundColor: theme.backgroundColor}}>
+          {/* Header */}
+          <View style={styles.header}>
+            <SelectDropdown
+              showsVerticalScrollIndicator={false}
+              data={countries}
+              buttonStyle={styles.buttonStyle}
+              buttonTextStyle={styles.buttonTextStyle}
+              dropdownStyle={styles.dropdownStyle}
+              dropdownTextStyle={styles.dropdownTextStyle}
+              rowTextStyle={{color: '#FF8E3C'}}
+              defaultButtonText={countries[defaultIndex]}
+              onSelect={(selectedItem, index) => {
+                console.log(selectedItem, index);
+              }}
+            />
+          </View>
+          {/* Body */}
+          <View style={styles.body}>
+            {/* Danh sách Kỳ Học */}
+            <FlatList
+              showsVerticalScrollIndicator={false}
+              data={bangDiem}
+              refreshing={loading}
+              onRefresh={onGetKyHoc}
               style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                width: '100%',
-                height: 120,
-                borderWidth: 1,
-                borderColor: '#FF8E3C',
-                borderRadius: 5,
-                marginBottom: 20,
-                padding: 15,
-              }}>
-              <View
-                style={{
-                  width: '90%',
-                  height: '100%',
-                  marginBottom: 10,
-                }}>
-                <Text
+                marginTop: 30,
+                height: 500,
+              }}
+              keyExtractor={item => item._id}
+              renderItem={({item}) => (
+                <View
                   style={{
-                    fontSize: 16,
-                    fontWeight: 'bold',
-                    color: '#000',
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    width: '100%',
+                    height: 120,
+                    borderWidth: 1,
+                    borderColor: '#FF8E3C',
+                    borderRadius: 5,
+                    marginBottom: 20,
+                    padding: 15,
                   }}>
-                  {item.name}
-                </Text>
-                <Text
-                  style={{
-                    fontSize: 14,
-                    color: '#949494',
-                    paddingTop: 5,
-                  }}>
-                  {item.score}
-                  <Text style={{color: 'red'}}> {item.score2}</Text>
-                </Text>
-                <Text
-                  style={{
-                    fontSize: 14,
-                    color: '#949494',
-                    paddingTop: 5,
-                  }}>
-                  {item.status}{' '}
-                  <Text style={{color: '#FF8E3C'}}>{item.status2}</Text>
-                </Text>
-              </View>
-              <Image
-                source={item.next}
-                style={{
-                  width: 20,
-                  height: 20,
-                  marginLeft: 10,
-                }}
-              />
-            </View>
-          )}
-        />
-      </View>
+                  <View
+                    style={{
+                      width: '90%',
+                      height: '100%',
+                      marginBottom: 10,
+                    }}>
+                    <Text
+                      style={[
+                        {
+                          fontSize: 16,
+                          fontWeight: 'bold',
+                          color: '#000',
+                        },
+                        {color: theme.color},
+                      ]}>
+                      {item.name}
+                    </Text>
+                    <Text
+                      style={{
+                        fontSize: 14,
+                        color: '#949494',
+                        paddingTop: 5,
+                      }}>
+                      Điểm trung bình:
+                      <Text style={{color: 'red'}}> {item.dtb}</Text>
+                    </Text>
+                    <Text
+                      style={{
+                        fontSize: 14,
+                        color: '#949494',
+                        paddingTop: 5,
+                      }}>
+                      Trạng thái:
+                      <Text style={{color: '#FF8E3C', paddingLeft: 5}}>
+                        {item.status}
+                      </Text>
+                    </Text>
+                  </View>
+                  <Image
+                    source={require('../../../../../media/img/more_than_50px.png')}
+                    style={{
+                      width: 20,
+                      height: 20,
+                      marginLeft: 10,
+                    }}
+                  />
+                </View>
+              )}
+            />
+          </View>
+        </View>
+      )}
     </View>
   );
 };
 
 const LichSuScreen = () => {
+  const theme = useContext(themContext);
+  const [lichsu, setLichSu] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const onGetLichSu = async () => {
+    setLoading(true);
+    const res = await getLichSu();
+    setLichSu(res);
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    onGetLichSu();
+  }, []);
+
   return (
     <View>
-      {/* Tiêu đề */}
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          height: 50,
-          borderWidth: 1,
-          borderColor: '#FF8E3C',
-          borderRadius: 5,
-          paddingLeft: 20,
-          paddingRight: 20,
-          margin: 20,
-          top: 20,
-          shadowColor: '#000',
-          shadowOpacity: 0.25,
-        }}>
-        <Text
+      {loading ? (
+        <View
           style={{
-            fontSize: 14,
-            fontWeight: 'bold',
-            color: '#373737',
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: '100%',
+            paddingTop: 50,
           }}>
-          Học kỳ
-        </Text>
-        <Text
-          style={{
-            fontSize: 14,
-            fontWeight: 'bold',
-            color: '#373737',
-          }}>
-          Tên môn
-        </Text>
-        <Text
-          style={{
-            fontSize: 14,
-            fontWeight: 'bold',
-            color: '#373737',
-          }}>
-          Trạng thái
-        </Text>
-      </View>
-      {/* Gạch ngang */}
-      <Text
-        style={{
-          width: '100%',
-          height: 1,
-          backgroundColor: '#CACACA',
-          top: 15,
-        }}
-      />
-      {/* Danh sách học kỳ*/}
-      <FlatList
-        showsVerticalScrollIndicator={false}
-        data={DataLS}
-        style={{
-          marginTop: 30,
-          height: 500,
-        }}
-        keyExtractor={item => item.id}
-        renderItem={({item}) => (
+          <Image
+            style={{width: 100, paddingLeft: 80}}
+            source={require('../../../../../media/img/loading_ly.gif')}
+          />
+        </View>
+      ) : (
+        <View style={[styles.T, {backgroundColor: theme.backgroundColor}]}>
+          {/* Tiêu đề */}
           <View
             style={{
               flexDirection: 'row',
               justifyContent: 'space-between',
               alignItems: 'center',
-              height: 60,
+              height: 50,
               borderWidth: 1,
               borderColor: '#FF8E3C',
               borderRadius: 5,
               paddingLeft: 20,
               paddingRight: 20,
               margin: 20,
-              marginBottom: 0,
-              top: -20,
+              top: 20,
+              shadowColor: '#000',
+              shadowOpacity: 0.25,
             }}>
             <Text
               style={{
-                width: 90,
                 fontSize: 14,
-                color: '#000',
                 fontWeight: 'bold',
-              }}>
-              {item.name}
-            </Text>
-            <Text
-              style={{
-                width: 120,
-                fontSize: 14,
-                paddingLeft: 20,
                 color: '#373737',
               }}>
-              {item.subject}
+              Học kỳ
             </Text>
             <Text
               style={{
-                width: 100,
                 fontSize: 14,
-                color: '#4FA474',
-                paddingLeft: 20,
+                fontWeight: 'bold',
+                color: '#373737',
               }}>
-              {item.status}
+              Tên môn
             </Text>
-            <Image
-              source={item.next}
+            <Text
               style={{
-                width: 20,
-                height: 20,
-                position: 'absolute',
-                right: 10,
-              }}
-            />
+                fontSize: 14,
+                fontWeight: 'bold',
+                color: '#373737',
+              }}>
+              Trạng thái
+            </Text>
           </View>
-        )}
-      />
+          {/* Gạch ngang */}
+          <Text
+            style={{
+              width: '100%',
+              height: 1,
+              backgroundColor: '#CACACA',
+              top: 15,
+            }}
+          />
+          {/* Danh sách học kỳ*/}
+          <FlatList
+            showsVerticalScrollIndicator={false}
+            data={lichsu}
+            refreshing={loading}
+            onRefresh={onGetLichSu}
+            style={{
+              marginTop: 30,
+              height: 500,
+            }}
+            keyExtractor={item => item._id}
+            renderItem={({item}) => (
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  height: 60,
+                  borderWidth: 1,
+                  borderColor: '#FF8E3C',
+                  borderRadius: 5,
+                  paddingLeft: 20,
+                  paddingRight: 20,
+                  margin: 20,
+                  marginBottom: 0,
+                  top: -20,
+                }}>
+                <Text
+                  style={[
+                    {
+                      width: 90,
+                      fontSize: 14,
+                      color: '#000',
+                      fontWeight: 'bold',
+                    },
+                    {color: theme.color},
+                  ]}>
+                  {item.ki}
+                </Text>
+                <Text
+                  style={{
+                    width: 120,
+                    fontSize: 14,
+                    paddingLeft: 20,
+                    color: '#373737',
+                  }}>
+                  {item.name}
+                </Text>
+                <Text
+                  style={{
+                    width: 100,
+                    fontSize: 14,
+                    color: '#4FA474',
+                    paddingLeft: 20,
+                  }}>
+                  {item.status}
+                </Text>
+                <Image
+                  source={require('../../../../../media/img/more_than_50px.png')}
+                  style={{
+                    width: 20,
+                    height: 20,
+                    position: 'absolute',
+                    right: 10,
+                  }}
+                />
+              </View>
+            )}
+          />
+        </View>
+      )}
     </View>
   );
 };
 
 const BangdiemScreen = () => {
+  const theme = useContext(themContext);
+
   return (
-    <View>
+    <View style={[styles.T, {backgroundColor: theme.backgroundColor}]}>
       {/* Header */}
       <View
         style={{
@@ -302,20 +383,35 @@ const BangdiemScreen = () => {
             marginTop: 10,
           }}>
           <Text
-            style={{
-              width: 70,
-              color: '#000',
-              fontWeight: '500',
-            }}>
+            style={[
+              {
+                width: 70,
+                color: '#000',
+                fontWeight: '500',
+              },
+              {color: theme.color},
+            ]}>
             Tổng môn chưa học
           </Text>
-          <Text style={{width: 70, color: '#000', fontWeight: '500'}}>
+          <Text
+            style={[
+              {width: 70, color: '#000', fontWeight: '500'},
+              {color: theme.color},
+            ]}>
             Tổng môn đạt
           </Text>
-          <Text style={{width: 70, color: '#000', fontWeight: '500'}}>
+          <Text
+            style={[
+              {width: 70, color: '#000', fontWeight: '500'},
+              {color: theme.color},
+            ]}>
             Tổng môn học lại
           </Text>
-          <Text style={{width: 70, color: '#000', fontWeight: '500'}}>
+          <Text
+            style={[
+              {width: 70, color: '#000', fontWeight: '500'},
+              {color: theme.color},
+            ]}>
             Tổng môn đang học
           </Text>
         </View>
@@ -332,39 +428,51 @@ const BangdiemScreen = () => {
             marginTop: 0,
           }}>
           <Text
-            style={{
-              width: 70,
-              color: '#000',
-              fontWeight: '500',
-              textAlign: 'center',
-            }}>
+            style={[
+              {
+                width: 70,
+                color: '#000',
+                fontWeight: '500',
+                textAlign: 'center',
+              },
+              {color: theme.color},
+            ]}>
             7
           </Text>
           <Text
-            style={{
-              width: 70,
-              color: '#000',
-              fontWeight: '500',
-              textAlign: 'center',
-            }}>
+            style={[
+              {
+                width: 70,
+                color: '#000',
+                fontWeight: '500',
+                textAlign: 'center',
+              },
+              {color: theme.color},
+            ]}>
             23
           </Text>
           <Text
-            style={{
-              width: 70,
-              color: '#000',
-              fontWeight: '500',
-              textAlign: 'center',
-            }}>
+            style={[
+              {
+                width: 70,
+                color: '#000',
+                fontWeight: '500',
+                textAlign: 'center',
+              },
+              {color: theme.color},
+            ]}>
             0
           </Text>
           <Text
-            style={{
-              width: 70,
-              color: '#000',
-              fontWeight: '500',
-              textAlign: 'center',
-            }}>
+            style={[
+              {
+                width: 70,
+                color: '#000',
+                fontWeight: '500',
+                textAlign: 'center',
+              },
+              {color: theme.color},
+            ]}>
             3
           </Text>
         </View>
@@ -389,27 +497,36 @@ const BangdiemScreen = () => {
             shadowOpacity: 0.25,
           }}>
           <Text
-            style={{
-              fontSize: 14,
-              fontWeight: 'bold',
-              color: '#373737',
-            }}>
+            style={[
+              {
+                fontSize: 14,
+                fontWeight: 'bold',
+                color: '#373737',
+              },
+              {color: theme.color},
+            ]}>
             Học kỳ
           </Text>
           <Text
-            style={{
-              fontSize: 14,
-              fontWeight: 'bold',
-              color: '#373737',
-            }}>
+            style={[
+              {
+                fontSize: 14,
+                fontWeight: 'bold',
+                color: '#373737',
+              },
+              {color: theme.color},
+            ]}>
             Tên môn
           </Text>
           <Text
-            style={{
-              fontSize: 14,
-              fontWeight: 'bold',
-              color: '#373737',
-            }}>
+            style={[
+              {
+                fontSize: 14,
+                fontWeight: 'bold',
+                color: '#373737',
+              },
+              {color: theme.color},
+            ]}>
             Trạng thái
           </Text>
         </View>
@@ -447,30 +564,39 @@ const BangdiemScreen = () => {
                 top: -20,
               }}>
               <Text
-                style={{
-                  width: 90,
-                  fontSize: 14,
-                  color: '#373737',
-                }}>
+                style={[
+                  {
+                    width: 90,
+                    fontSize: 14,
+                    color: '#373737',
+                  },
+                  {color: theme.color},
+                ]}>
                 {item.name}
               </Text>
               <Text
-                style={{
-                  width: 120,
-                  fontSize: 14,
-                  paddingLeft: 20,
-                  color: '#373737',
-                }}>
+                style={[
+                  {
+                    width: 120,
+                    fontSize: 14,
+                    paddingLeft: 20,
+                    color: '#373737',
+                  },
+                  {color: theme.color},
+                ]}>
                 {item.subject}
               </Text>
               <Text
-                style={{
-                  width: 100,
-                  fontSize: 14,
-                  color: '#373737',
-                  fontWeight: 'bold',
-                  paddingLeft: 30,
-                }}>
+                style={[
+                  {
+                    width: 100,
+                    fontSize: 14,
+                    color: '#373737',
+                    fontWeight: 'bold',
+                    paddingLeft: 30,
+                  },
+                  {color: theme.color},
+                ]}>
                 {item.status}
               </Text>
               <Image

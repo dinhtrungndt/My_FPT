@@ -1,11 +1,18 @@
 import {StyleSheet, Text, View, Image} from 'react-native';
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 
 import {NavigationContainer} from '@react-navigation/native';
 import {createMaterialBottomTabNavigator} from '@react-navigation/material-bottom-tabs';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import {
+  createBottomTabNavigator,
+  DarkTheme,
+} from '@react-navigation/bottom-tabs';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
+import {EventRegister} from 'react-native-event-listeners';
+import theme from '../../../theme/theme';
+import themContext from '../../../theme/themeContext';
+import {DefaultTheme} from 'react-native-paper';
 
 import NewsScreens from './news';
 import LoginScreens from '../user/login';
@@ -15,6 +22,9 @@ import ScheduleScreens from './schedule';
 import AccountScreens from './Activity';
 import DiemDanhScreens from './news/diemdanh';
 import ThongBaoScreens from './news/thongbao';
+import DienDanScreens from './diendan';
+import SearchScreens from './news/search';
+import EditScreens from './Activity/editProject';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -49,6 +59,20 @@ const options = ({route}) => ({
           <Image source={require('../../../media/img/schedule_logo.png')} />
         );
       }
+    } else if (route.name === 'DienDanScreens') {
+      if (focused) {
+        return (
+          <Image
+            source={require('../../../media/img/diendan_bottom_tab_icon.png')}
+          />
+        );
+      } else {
+        return (
+          <Image
+            source={require('../../../media/img/diendan_bottom_tab_icon.png')}
+          />
+        );
+      }
     } else if (route.name === 'TranscriptScreens') {
       if (focused) {
         return (
@@ -61,7 +85,7 @@ const options = ({route}) => ({
           <Image source={require('../../../media/img/transcript_logo.png')} />
         );
       }
-    } else if (route.name === 'AccountScreens') {
+    } else if (route.name === 'StackAccount') {
       if (focused) {
         return (
           <Image
@@ -103,6 +127,18 @@ const options = ({route}) => ({
       ) : (
         <Text> Lịch học </Text>
       );
+    } else if (route.name === 'DienDanScreens') {
+      return focused ? (
+        <Text
+          style={{
+            color: '#FF8E3C',
+          }}>
+          {' '}
+          Diễn đàn{' '}
+        </Text>
+      ) : (
+        <Text> Diễn đàn </Text>
+      );
     } else if (route.name === 'TranscriptScreens') {
       return focused ? (
         <Text
@@ -115,7 +151,7 @@ const options = ({route}) => ({
       ) : (
         <Text> Điểm </Text>
       );
-    } else if (route.name === 'AccountScreens') {
+    } else if (route.name === 'StackAccount') {
       return focused ? (
         <Text
           style={{
@@ -154,37 +190,70 @@ const HomeStack = () => {
     <Stack.Navigator screenOptions={{headerShown: false}}>
       {/* News */}
       <Stack.Screen name="NewsScreens" component={NewsScreens} />
+      <Stack.Screen name="SearchScreens" component={SearchScreens} />
       <Stack.Screen name="DiemDanhScreens" component={DiemDanhScreens} />
       <Stack.Screen name="ThongBaoScreens" component={ThongBaoScreens} />
+      <Stack.Screen name="AccountScreens" component={AccountScreens} />
       <Stack.Screen name="LoginScreens" component={LoginScreens} />
+      <Stack.Screen name="EditScreens" component={EditScreens} />
+      <Stack.Screen name="DienDanScreens" component={DienDanScreens} />
+    </Stack.Navigator>
+  );
+};
+
+const StackAccount = () => {
+  return (
+    <Stack.Navigator screenOptions={{headerShown: false}}>
+      <Stack.Screen name="AccountScreens" component={AccountScreens} />
+      <Stack.Screen name="EditScreens" component={EditScreens} />
     </Stack.Navigator>
   );
 };
 
 const HomeNavigations = () => {
+  const [darkMode, setDarkMode] = useState(false);
+
+  useEffect(() => {
+    const listener = EventRegister.addEventListener('changeTheme', data => {
+      setDarkMode(data);
+    });
+    return () => {
+      EventRegister.removeEventListener(listener);
+    };
+  }, [darkMode]);
+
   return (
-    <Tab.Navigator screenOptions={options}>
-      <Tab.Screen
-        name="HomeStack"
-        component={HomeStack}
-        options={{headerShown: false}}
-      />
-      <Tab.Screen
-        name="ScheduleScreens"
-        component={ScheduleScreens}
-        options={{headerShown: false}}
-      />
-      <Tab.Screen
-        name="TranscriptScreens"
-        component={TranscriptScreens}
-        options={{headerShown: false}}
-      />
-      <Tab.Screen
-        name="AccountScreens"
-        component={AccountScreens}
-        options={{headerShown: false}}
-      />
-    </Tab.Navigator>
+    <themContext.Provider value={darkMode === true ? theme.dark : theme.light}>
+      <Tab.Navigator
+        screenOptions={options}
+        them={darkMode === true ? DarkTheme : DefaultTheme}>
+        <Tab.Screen
+          name="HomeStack"
+          component={HomeStack}
+          options={{headerShown: false}}
+        />
+        <Tab.Screen
+          name="ScheduleScreens"
+          component={ScheduleScreens}
+          options={{headerShown: false}}
+        />
+        <Tab.Screen
+          name="DienDanScreens"
+          component={DienDanScreens}
+          options={{headerShown: false}}
+        />
+        <Tab.Screen
+          name="TranscriptScreens"
+          component={TranscriptScreens}
+          options={{headerShown: false}}
+        />
+        <Tab.Screen
+          name="StackAccount"
+          component={StackAccount}
+          options={{headerShown: false}}
+        />
+      </Tab.Navigator>
+    </themContext.Provider>
   );
 };
 

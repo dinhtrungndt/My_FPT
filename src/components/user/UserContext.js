@@ -9,7 +9,6 @@ export const UserProvider = props => {
 
   const [user, setUser] = useState(null);
 
-  // Kiểm tra thông tin đăng nhập đã lưu khi ứng dụng khởi động
   useEffect(() => {
     const checkLogin = async () => {
       try {

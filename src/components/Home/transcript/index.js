@@ -7,14 +7,19 @@ import {
   TextInput,
   FlatList,
 } from 'react-native';
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 
 import ModalDropdown from 'react-native-modal-dropdown';
+import {UserContext} from '../../user/UserContext';
 
 import HomeTabsTop from './TabTop';
+import themContext from '../../../../theme/themeContext';
 
 const TranscriptScreens = props => {
   const {navigation} = props;
+
+  const theme = useContext(themContext);
+  const {user} = useContext(UserContext);
 
   const menuOptions = [
     'Thông tin cá nhân',
@@ -55,7 +60,7 @@ const TranscriptScreens = props => {
   };
 
   return (
-    <View style={styles.T}>
+    <View style={[styles.T, {backgroundColor: theme.backgroundColor}]}>
       {/* header */}
       <View style={styles.header}>
         {/* Tài khoản */}
@@ -67,30 +72,36 @@ const TranscriptScreens = props => {
             borderRadius: 50 / 2,
             marginLeft: -10,
           }}
-          source={require('../../../../media/img/user.png')}
+          source={{uri: user.user.img}}
         />
         <View>
           {/* Hello bee */}
           <Text
-            style={{
-              height: 20,
-              fontSize: 16,
-              fontWeight: 'bold',
-              marginLeft: 10,
-            }}>
+            style={[
+              {
+                height: 20,
+                fontSize: 16,
+                fontWeight: 'bold',
+                marginLeft: 10,
+              },
+              {color: theme.color},
+            ]}>
             Hello bee ✋
           </Text>
           {/* name user */}
           <Text
-            style={{
-              height: 20,
-              fontSize: 16,
-              fontWeight: 'bold',
-              marginLeft: 10,
-              marginTop: 5,
-              color: '#000',
-            }}>
-            Nguyễn Đình Trưng
+            style={[
+              {
+                height: 20,
+                fontSize: 16,
+                fontWeight: 'bold',
+                marginLeft: 10,
+                marginTop: 5,
+                color: '#000',
+              },
+              {color: theme.color},
+            ]}>
+            {user.user.name}
           </Text>
         </View>
 
@@ -98,7 +109,7 @@ const TranscriptScreens = props => {
         <TouchableOpacity
           onPress={() => navigation.navigate('DiemDanhScreens')}>
           <Image
-            style={{top: 15, marginLeft: 85}}
+            style={{top: 15, marginLeft: 65}}
             source={require('../../../../media/img/attendance.png')}
           />
         </TouchableOpacity>
@@ -106,31 +117,29 @@ const TranscriptScreens = props => {
         <TouchableOpacity
           onPress={() => navigation.navigate('ThongBaoScreens')}>
           <Image
-            style={{top: 15, marginLeft: 5}}
+            style={{top: 15, marginLeft: 10}}
             source={require('../../../../media/img/notification.png')}
           />
         </TouchableOpacity>
         {/* 3 chấm */}
-        <View>
-          <View>
-            <ModalDropdown
-              options={menuOptions}
-              renderRow={renderMenuRow}
-              defaultIndex={0}
-              dropdownStyle={{
-                width: 180,
-                height: 190,
-                marginTop: 10,
-                borderWidth: 1,
-                borderColor: '#FF8E3C',
-                padding: 10,
-              }}>
-              <Image
-                style={{top: 15}}
-                source={require('../../../../media/img/menu_logout.png')}
-              />
-            </ModalDropdown>
-          </View>
+        <View style={{marginLeft: 10}}>
+          <ModalDropdown
+            options={menuOptions}
+            renderRow={renderMenuRow}
+            defaultIndex={0}
+            dropdownStyle={{
+              width: 180,
+              height: 220,
+              marginTop: 10,
+              borderWidth: 1,
+              borderColor: '#FF8E3C',
+              padding: 10,
+            }}>
+            <Image
+              style={{top: 15}}
+              source={require('../../../../media/img/menu_logout.png')}
+            />
+          </ModalDropdown>
         </View>
       </View>
       {/* gạch ngang */}
@@ -159,7 +168,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     height: 10,
     paddingHorizontal: 16,
-    backgroundColor: '#fff',
     shadowColor: '#000',
     shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.2,
@@ -168,6 +176,5 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     padding: 10,
-    backgroundColor: '#fff',
   },
 });

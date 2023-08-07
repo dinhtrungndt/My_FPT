@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import {
   View,
   Text,
@@ -7,758 +7,729 @@ import {
   StyleSheet,
   FlatList,
   ScrollView,
+  Platform,
+  Modal,
 } from 'react-native';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
+import moment from 'moment';
 
 import {DataTNHori} from '../Data';
-
+import {getMonHoc} from '../../homeService';
+import {getLichThi} from '../../homeService';
+import themContext from '../../../../../theme/themeContext';
 import {Calendar, LocaleConfig} from 'react-native-calendars';
+import {
+  BallIndicator,
+  BarIndicator,
+  DotIndicator,
+  MaterialIndicator,
+  PacmanIndicator,
+  PulseIndicator,
+  SkypeIndicator,
+  UIActivityIndicator,
+  WaveIndicator,
+} from 'react-native-indicators';
+import {Picker} from 'react-native-wheel-pick';
 
 const ScheduleScreen = () => {
   const [selectedDay, setSelectedDay] = useState('');
+  const [currentDate, setCurrentDate] = useState('');
+  const [isDialogVisible, setDialogVisible] = useState(false);
+  const [isListVisible, setListVisible] = useState(false);
+  const [selectedLocation, setSelectedLocation] = useState(null);
+  const theme = useContext(themContext);
 
-  const getScheduleForSelectedDay = selectedDay => {
-    const selectedDaySchedule = DataTNHori.find(
-      item => item.ngay === selectedDay,
-    );
-    return selectedDaySchedule ? selectedDaySchedule.dataLH : [];
+  const handleToggleDialog = () => {
+    setDialogVisible(!isDialogVisible);
   };
 
-  // console.log('selectedDay:', selectedDay);
+  const handleSelectLocation = location => {
+    setSelectedLocation(location);
+    setListVisible(false);
+    setDialogVisible(false);
+
+    const selectedDayValue = parseInt(location.split('-')[0], 10);
+    setSelectedDay(selectedDayValue.toString());
+  };
+
+  const fptPolytechnicLocations = [
+    {label: '7 ngày tới', value: '7-ngay-toi'},
+    {label: '14 ngày tới', value: '14-ngay-toi'},
+    {label: '30 ngày tới', value: '30-ngay-toi'},
+    {label: '90 ngày tới', value: '90-ngay-toi'},
+    {label: '7 ngày trước', value: '7-ngay-truoc'},
+    {label: '14 ngày trước', value: '14-ngay-truoc'},
+    {label: '30 ngày trước', value: '30-ngay-truoc'},
+    {label: '90 ngày trước', value: '90-ngay-truoc'},
+  ];
+
+  const [MonHoc, setMonHoc] = useState([]);
+
+  const getCurrentDate = () => {
+    const dateObj = new Date();
+    const options = {
+      weekday: 'long',
+      month: 'long',
+      year: 'numeric',
+      day: 'numeric',
+    };
+    const formattedDate = dateObj.toLocaleDateString('vi-VN', options);
+    return formattedDate;
+  };
 
   useEffect(() => {
-    setSelectedDay('24');
+    setSelectedDay('3');
+    setCurrentDate(getCurrentDate());
   }, []);
 
   const handleTodayButtonClick = () => {
-    setSelectedDay('24');
+    setSelectedDay('3');
   };
 
+  const [loading, setLoading] = useState(false);
+
+  const onGetMonHoc = async selectedDay => {
+    setLoading(true);
+    try {
+      const MonHocData = await getMonHoc(selectedDay);
+      console.log('MonHocData:', MonHocData);
+      setMonHoc(MonHocData); // Cập nhật biến MonHoc với dữ liệu đã lấy
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+    setLoading(false);
+  };
+
+  const handleSelectDay = day => {
+    setSelectedDay(day);
+  };
+
+  useEffect(() => {
+    onGetMonHoc(selectedDay);
+  }, [selectedDay]);
+
   return (
-    <View>
-      {/* Hôm nay */}
-      <View style={{flexDirection: 'row'}}>
-        <Text
+    <View style={[styles.T, {backgroundColor: theme.backgroundColor}]}>
+      {loading ? (
+        <View
           style={{
-            fontSize: 40,
-            fontFamily: 'Roboto',
-            fontWeight: 'bold',
-            marginLeft: 10,
-            marginTop: 10,
-            color: '#000',
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: '100%',
+            paddingTop: 50,
           }}>
-          24
-        </Text>
-        <View style={{top: 5}}>
-          <Text
-            style={{
-              width: 100,
-              fontSize: 16,
-              fontFamily: 'Roboto',
-              fontWeight: 'bold',
-              marginLeft: 10,
-              marginTop: 10,
-              color: '#949494',
-            }}>
-            Thứ 2
-          </Text>
-          <Text
-            style={{
-              fontSize: 16,
-              fontFamily: 'Roboto',
-              fontWeight: 'bold',
-              marginLeft: 10,
-              marginTop: 5,
-              color: '#949494',
-            }}>
-            Tháng 7 Năm 2023
-          </Text>
-        </View>
-        {/* Hôm nay buttom */}
-        <TouchableOpacity
-          onPress={handleTodayButtonClick}
-          style={{
-            width: 90,
-            height: 40,
-            borderRadius: 10,
-            top: 20,
-            right: 10,
-            borderWidth: 1,
-            borderColor: '#FF8E3C',
-            position: 'absolute',
-          }}>
-          <Text
-            style={{
-              fontSize: 16,
-              fontFamily: 'Roboto',
-              fontWeight: 'bold',
-              textAlign: 'center',
-              top: 8,
-              color: '#FF8E3C',
-            }}>
-            Hôm nay
-          </Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* gạch ngang */}
-      <Text
-        style={{
-          width: '100%',
-          height: 1,
-          backgroundColor: '#A2A2A2',
-          marginTop: 15,
-        }}></Text>
-
-      {/* Danh sách Horizontal thứ ngày */}
-      <FlatList
-        horizontal={true}
-        showsHorizontalScrollIndicator={false}
-        style={{marginTop: 20, width: '100%', height: 80, marginLeft: 10}}
-        data={DataTNHori}
-        renderItem={({item}) => (
-          <TouchableOpacity
-            onPress={() => setSelectedDay(item.ngay)}
-            style={{
-              width: 52,
-              borderColor: 'red',
-              backgroundColor: selectedDay === item.ngay ? '#FF8E3C' : '#fff',
-              borderRadius: 16,
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}>
-            <Text
-              style={{
-                fontSize: 13,
-                fontFamily: 'Roboto',
-                fontWeight: 'bold',
-                marginTop: 5,
-                textAlign: 'center',
-                color: selectedDay === item.ngay ? '#fff' : '#949494',
-              }}>
-              {item.thu}
-            </Text>
-            <Text
-              style={{
-                fontSize: 20,
-                fontFamily: 'Roboto',
-                fontWeight: 'bold',
-                marginBottom: 7,
-                textAlign: 'center',
-                color: selectedDay === item.ngay ? '#fff' : '#949494',
-              }}>
-              {item.ngay}
-            </Text>
-          </TouchableOpacity>
-        )}
-        keyExtractor={(item, index) => index.toString()}
-      />
-
-      {/* Title Time, Course and arrange */}
-      <View
-        style={{
-          flexDirection: 'row',
-          marginTop: 20,
-          marginBottom: 10,
-        }}>
-        <Text
-          style={{
-            fontSize: 16,
-            fontFamily: 'Roboto',
-            fontWeight: 'bold',
-            marginLeft: 10,
-            color: '#949494',
-          }}>
-          Thời gian
-        </Text>
-        <Text
-          style={{
-            fontSize: 16,
-            fontFamily: 'Roboto',
-            fontWeight: 'bold',
-            marginLeft: 30,
-            color: '#949494',
-          }}>
-          Môn học
-        </Text>
-        <TouchableOpacity>
           <Image
-            style={{marginLeft: 170}}
-            source={require('../../../../../media/img/sorting_25px.png')}
+            style={{width: 100, paddingLeft: 80}}
+            source={require('../../../../../media/img/loading_ly.gif')}
           />
-        </TouchableOpacity>
-      </View>
+        </View>
+      ) : (
+        <View>
+          {/* Hôm nay */}
+          <View style={{flexDirection: 'row'}}>
+            <Text
+              style={[
+                {
+                  fontSize: 40,
+                  fontFamily: 'Roboto',
+                  fontWeight: 'bold',
+                  marginLeft: 10,
+                  marginTop: 10,
+                  color: '#000',
+                },
+                {color: theme.color},
+              ]}>
+              {currentDate?.split(',')[1]?.trim()?.split(' ')[0]}
+            </Text>
+            <View style={{top: 5}}>
+              <Text
+                style={{
+                  width: 100,
+                  fontSize: 16,
+                  fontFamily: 'Roboto',
+                  fontWeight: 'bold',
+                  marginLeft: 10,
+                  marginTop: 10,
+                  color: '#949494',
+                }}>
+                {currentDate.split(',')[0]}
+              </Text>
+              <View style={{flexDirection: 'row'}}>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    fontFamily: 'Roboto',
+                    fontWeight: 'bold',
+                    marginLeft: 10,
+                    marginTop: 5,
+                    color: '#949494',
+                  }}>
+                  {currentDate?.split(',')[1]}
+                </Text>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    fontFamily: 'Roboto',
+                    fontWeight: 'bold',
+                    marginTop: 5,
+                    color: '#949494',
+                  }}>
+                  {currentDate?.split(',')[2]}
+                </Text>
+              </View>
+            </View>
+            {/* Hôm nay buttom */}
+            <TouchableOpacity
+              onPress={handleTodayButtonClick}
+              style={{
+                width: 90,
+                height: 40,
+                borderRadius: 10,
+                top: 20,
+                right: 10,
+                borderWidth: 1,
+                borderColor: '#FF8E3C',
+                position: 'absolute',
+              }}>
+              <Text
+                style={{
+                  fontSize: 16,
+                  fontFamily: 'Roboto',
+                  fontWeight: 'bold',
+                  textAlign: 'center',
+                  top: 8,
+                  color: '#FF8E3C',
+                }}>
+                Hôm nay
+              </Text>
+            </TouchableOpacity>
+          </View>
 
-      <View>
-        {selectedDay === '24' && (
+          {/* gạch ngang */}
+          <Text
+            style={{
+              width: '100%',
+              height: 1,
+              backgroundColor: '#A2A2A2',
+              marginTop: 15,
+            }}></Text>
+
+          {/* Danh sách Horizontal thứ ngày */}
           <FlatList
-            data={getScheduleForSelectedDay(selectedDay)}
-            showsVerticalScrollIndicator={false}
-            style={{height: 355}}
+            horizontal={true}
+            showsHorizontalScrollIndicator={false}
+            style={{
+              marginTop: 20,
+              width: '100%',
+              marginLeft: 10,
+            }}
+            data={DataTNHori}
             renderItem={({item}) => (
-              <View style={{flexDirection: 'row', marginBottom: 20}}>
-                {/* Time */}
-                <View style={{marginLeft: 20}}>
-                  <Text
-                    style={{
-                      fontSize: 16,
-                      fontFamily: 'Roboto',
-                      fontWeight: 'bold',
-                      textAlign: 'center',
-                      color: '#000',
-                    }}>
-                    {item.dateStart}
-                  </Text>
-                  <Text
-                    style={{
-                      fontSize: 16,
-                      fontFamily: 'Roboto',
-                      fontWeight: 'bold',
-                      color: '#949494',
-                    }}>
-                    {item.dateEnd}
-                  </Text>
-                </View>
-                {/* Course */}
-                <View
+              <TouchableOpacity
+                onPress={() => handleSelectDay(item.ngay)}
+                style={{
+                  width: 52,
+                  borderColor: 'red',
+                  backgroundColor:
+                    selectedDay === item.ngay ? '#FF8E3C' : '#fff',
+                  borderRadius: 16,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                <Text
                   style={{
-                    width: 270,
-                    marginLeft: 35,
-                    padding: 10,
-                    borderRadius: 10,
-                    backgroundColor: '#FF8E3C',
+                    fontSize: 13,
+                    fontFamily: 'Roboto',
+                    fontWeight: 'bold',
+                    marginTop: 5,
+                    textAlign: 'center',
+                    color: selectedDay === item.ngay ? '#fff' : '#949494',
                   }}>
-                  <Text
-                    style={{
-                      fontSize: 16,
-                      fontFamily: 'Roboto',
-                      fontWeight: 'bold',
-                      marginLeft: 10,
-                      color: '#fff',
-                    }}>
-                    {item.subject}
-                  </Text>
-                  <Text
-                    style={{
-                      fontSize: 14,
-                      fontFamily: 'Roboto',
-                      fontWeight: 'bold',
-                      marginLeft: 10,
-                      color: '#fff',
-                    }}>
-                    {item.class}
-                  </Text>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      marginLeft: 15,
-                      marginTop: 10,
-                    }}>
-                    <Image
-                      style={{
-                        width: 15,
-                        height: 15,
-                        marginRight: 5,
-                      }}
-                      source={require('../../../../../media/img/home_address_25px.png')}
-                    />
-                    <Text
-                      style={{
-                        fontSize: 14,
-                        fontFamily: 'Roboto',
-                        fontWeight: 'bold',
-                        color: '#fff',
-                      }}>
-                      {item.room}
-                    </Text>
-                  </View>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      marginLeft: 20,
-                      marginTop: 5,
-                    }}>
-                    <Image
-                      style={{width: 20, height: 20}}
-                      source={require('../../../../../media/img/teacher_25px.png')}
-                    />
-                    <Text
-                      style={{
-                        fontSize: 14,
-                        fontFamily: 'Roboto',
-                        fontWeight: 'bold',
-                        color: '#fff',
-                      }}>
-                      {item.teacher}
-                    </Text>
-                  </View>
-                  <TouchableOpacity>
-                    <Image
-                      style={{
-                        width: 20,
-                        height: 20,
-                        position: 'absolute',
-                        right: 5,
-                        bottom: 5,
-                      }}
-                      source={item.next}
-                    />
-                  </TouchableOpacity>
-                </View>
-              </View>
+                  {item.thu}
+                </Text>
+                <Text
+                  style={{
+                    fontSize: 20,
+                    fontFamily: 'Roboto',
+                    fontWeight: 'bold',
+                    marginBottom: 7,
+                    textAlign: 'center',
+                    color: selectedDay === item.ngay ? '#fff' : '#949494',
+                  }}>
+                  {item.ngay}
+                </Text>
+              </TouchableOpacity>
             )}
             keyExtractor={(item, index) => index.toString()}
           />
-        )}
-        {selectedDay === '25' && (
-          <FlatList
-            data={getScheduleForSelectedDay(selectedDay)}
-            showsVerticalScrollIndicator={false}
-            style={{height: 355}}
-            renderItem={({item}) => (
-              <View style={{flexDirection: 'row', marginBottom: 20}}>
-                {/* Time */}
-                <View style={{marginLeft: 20}}>
-                  <Text
-                    style={{
-                      fontSize: 16,
-                      fontFamily: 'Roboto',
-                      fontWeight: 'bold',
-                      textAlign: 'center',
-                      color: '#000',
-                    }}>
-                    {item.dateStart}
-                  </Text>
-                  <Text
-                    style={{
-                      fontSize: 16,
-                      fontFamily: 'Roboto',
-                      fontWeight: 'bold',
-                      color: '#949494',
-                    }}>
-                    {item.dateEnd}
-                  </Text>
-                </View>
-                {/* Course */}
-                <View
+
+          {/* Title Time, Course and arrange */}
+          <View
+            style={{
+              flexDirection: 'row',
+              marginTop: 20,
+              marginBottom: 10,
+            }}>
+            <Text
+              style={{
+                fontSize: 16,
+                fontFamily: 'Roboto',
+                fontWeight: 'bold',
+                marginLeft: 10,
+                color: '#949494',
+              }}>
+              Thời gian
+            </Text>
+            <Text
+              style={{
+                fontSize: 16,
+                fontFamily: 'Roboto',
+                fontWeight: 'bold',
+                marginLeft: 30,
+                color: '#949494',
+              }}>
+              Môn học
+            </Text>
+            <TouchableOpacity onPress={handleToggleDialog}>
+              <Image
+                style={{marginLeft: 170}}
+                source={require('../../../../../media/img/sorting_25px.png')}
+              />
+            </TouchableOpacity>
+
+            {/* Add the dialog */}
+            <Modal
+              visible={isDialogVisible}
+              animationType="slide"
+              transparent={true}
+              onRequestClose={handleToggleDialog}>
+              <View style={styles.dialogContainer}>
+                <Text style={styles.dialogTitle}>Chọn thời gian</Text>
+                <Picker
+                  style={{height: 200, width: '100%', marginBottom: 20}}
+                  selectedValue={selectedLocation}
+                  pickerData={fptPolytechnicLocations.map(item => item.label)}
+                  onValueChange={value => {
+                    setSelectedLocation(value);
+                    handleSelectLocation(value);
+                  }}
+                />
+
+                <TouchableOpacity
                   style={{
-                    width: 270,
-                    marginLeft: 35,
-                    padding: 10,
-                    borderRadius: 10,
                     backgroundColor: '#FF8E3C',
-                  }}>
-                  <Text
-                    style={{
-                      fontSize: 16,
-                      fontFamily: 'Roboto',
-                      fontWeight: 'bold',
-                      marginLeft: 10,
-                      color: '#fff',
-                    }}>
-                    {item.subject}
-                  </Text>
-                  <Text
-                    style={{
-                      fontSize: 14,
-                      fontFamily: 'Roboto',
-                      fontWeight: 'bold',
-                      marginLeft: 10,
-                      color: '#fff',
-                    }}>
-                    {item.class}
-                  </Text>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      marginLeft: 15,
-                      marginTop: 10,
-                    }}>
-                    <Image
-                      style={{
-                        width: 15,
-                        height: 15,
-                        marginRight: 5,
-                      }}
-                      source={require('../../../../../media/img/home_address_25px.png')}
-                    />
-                    <Text
-                      style={{
-                        fontSize: 14,
-                        fontFamily: 'Roboto',
-                        fontWeight: 'bold',
-                        color: '#fff',
-                      }}>
-                      {item.room}
-                    </Text>
-                  </View>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      marginLeft: 20,
-                      marginTop: 5,
-                    }}>
-                    <Image
-                      style={{width: 20, height: 20}}
-                      source={require('../../../../../media/img/teacher_25px.png')}
-                    />
-                    <Text
-                      style={{
-                        fontSize: 14,
-                        fontFamily: 'Roboto',
-                        fontWeight: 'bold',
-                        color: '#fff',
-                      }}>
-                      {item.teacher}
-                    </Text>
-                  </View>
-                  <TouchableOpacity>
-                    <Image
-                      style={{
-                        width: 20,
-                        height: 20,
-                        position: 'absolute',
-                        right: 5,
-                        bottom: 5,
-                      }}
-                      source={item.next}
-                    />
-                  </TouchableOpacity>
-                </View>
+                    width: 120,
+                    height: 40,
+                    borderRadius: 20,
+                    marginLeft: 120,
+                    marginTop: 5,
+                    textAlign: 'center',
+                    shadowColor: '#000',
+                    shadowOffset: {
+                      width: 0,
+                      height: 2,
+                    },
+                    shadowOpacity: 0.25,
+                    shadowRadius: 3.84,
+                    elevation: 5,
+                  }}
+                  onPress={handleToggleDialog}>
+                  <Text style={styles.dialogCancelButton}>Hủy</Text>
+                </TouchableOpacity>
               </View>
+            </Modal>
+          </View>
+
+          <View>
+            {MonHoc.length > 0 && (
+              <FlatList
+                data={MonHoc.filter(
+                  item =>
+                    moment(item.ngayHoc).date().toString() === selectedDay,
+                )}
+                showsVerticalScrollIndicator={false}
+                refreshing={loading}
+                onRefresh={() => onGetMonHoc(selectedDay)}
+                keyExtractor={item => item._id}
+                style={{height: 410}}
+                renderItem={({item}) => {
+                  return (
+                    <View style={{flexDirection: 'row', marginBottom: 20}}>
+                      {/* Time */}
+                      <View style={{marginLeft: 20}}>
+                        <Text
+                          style={[
+                            {
+                              fontSize: 16,
+                              fontFamily: 'Roboto',
+                              fontWeight: 'bold',
+                              textAlign: 'center',
+                              color: '#000',
+                            },
+                            {color: theme.color},
+                          ]}>
+                          {item.timeStart}
+                        </Text>
+                        <Text
+                          style={{
+                            fontSize: 16,
+                            fontFamily: 'Roboto',
+                            fontWeight: 'bold',
+                            color: '#949494',
+                          }}>
+                          {item.timeEnd}
+                        </Text>
+                      </View>
+                      {/* Course */}
+                      <View
+                        style={{
+                          width: 270,
+                          marginLeft: 35,
+                          padding: 10,
+                          borderRadius: 10,
+                          borderWidth: 3,
+                          borderColor: '#FF8E3C',
+                        }}>
+                        <Text
+                          style={{
+                            fontSize: 16,
+                            fontFamily: 'Roboto',
+                            marginLeft: 10,
+                            color: '#FF8E3C',
+                          }}>
+                          Môn: {item.name}
+                        </Text>
+                        <Text
+                          style={{
+                            fontSize: 14,
+                            fontFamily: 'Roboto',
+                            marginLeft: 10,
+                            color: '#FF8E3C',
+                          }}>
+                          Lớp: {item.lop}
+                        </Text>
+                        <View
+                          style={{
+                            flexDirection: 'row',
+                            marginLeft: 15,
+                            marginTop: 10,
+                          }}>
+                          <Image
+                            style={{
+                              width: 20,
+                              height: 20,
+                              marginLeft: 5,
+                            }}
+                            source={require('../../../../../media/img/home_address_25px.png')}
+                          />
+                          <Text
+                            style={{
+                              fontSize: 14,
+                              fontFamily: 'Roboto',
+                              color: '#FF8E3C',
+                              paddingLeft: 10,
+                            }}>
+                            Phòng: {item.room}
+                          </Text>
+                        </View>
+                        <View
+                          style={{
+                            flexDirection: 'row',
+                            marginLeft: 20,
+                            marginTop: 5,
+                          }}>
+                          <Image
+                            style={{width: 20, height: 20}}
+                            source={require('../../../../../media/img/teacher_25px.png')}
+                          />
+                          <Text
+                            style={{
+                              fontSize: 14,
+                              fontFamily: 'Roboto',
+                              color: '#FF8E3C',
+                              paddingLeft: 10,
+                            }}>
+                            Gv: {item.GV}
+                          </Text>
+                        </View>
+                        <TouchableOpacity>
+                          <Image
+                            style={{
+                              width: 20,
+                              height: 20,
+                              position: 'absolute',
+                              right: 5,
+                              bottom: 5,
+                            }}
+                            source={require('../../../../../media/img/forward_25px.png')}
+                          />
+                        </TouchableOpacity>
+                      </View>
+                    </View>
+                  );
+                }}
+              />
             )}
-            keyExtractor={(item, index) => index.toString()}
-          />
-        )}
-        {selectedDay === '26' && (
-          <FlatList
-            data={getScheduleForSelectedDay(selectedDay)}
-            showsVerticalScrollIndicator={false}
-            style={{height: 355}}
-            renderItem={({item}) => (
-              <View style={{flexDirection: 'row', marginBottom: 20}}>
-                {/* Time */}
-                <View style={{marginLeft: 20}}>
-                  <Text
-                    style={{
-                      fontSize: 16,
-                      fontFamily: 'Roboto',
-                      fontWeight: 'bold',
-                      textAlign: 'center',
-                      color: '#000',
-                    }}>
-                    {item.dateStart}
-                  </Text>
-                  <Text
-                    style={{
-                      fontSize: 16,
-                      fontFamily: 'Roboto',
-                      fontWeight: 'bold',
-                      color: '#949494',
-                    }}>
-                    {item.dateEnd}
-                  </Text>
-                </View>
-                {/* Course */}
-                <View
-                  style={{
-                    width: 270,
-                    marginLeft: 35,
-                    padding: 10,
-                    borderRadius: 10,
-                    backgroundColor: '#FF8E3C',
-                  }}>
-                  <Text
-                    style={{
-                      fontSize: 16,
-                      fontFamily: 'Roboto',
-                      fontWeight: 'bold',
-                      marginLeft: 10,
-                      color: '#fff',
-                    }}>
-                    {item.subject}
-                  </Text>
-                  <Text
-                    style={{
-                      fontSize: 14,
-                      fontFamily: 'Roboto',
-                      fontWeight: 'bold',
-                      marginLeft: 10,
-                      color: '#fff',
-                    }}>
-                    {item.class}
-                  </Text>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      marginLeft: 17,
-                      marginTop: 10,
-                    }}>
-                    <Image
-                      style={{
-                        width: 15,
-                        height: 15,
-                        marginRight: 5,
-                      }}
-                      source={require('../../../../../media/img/home_address_25px.png')}
-                    />
-                    <Text
-                      style={{
-                        fontSize: 14,
-                        fontFamily: 'Roboto',
-                        fontWeight: 'bold',
-                        color: '#fff',
-                      }}>
-                      {item.room}
-                    </Text>
-                  </View>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      marginLeft: 20,
-                      marginTop: 5,
-                    }}>
-                    <Image
-                      style={{width: 20, height: 20}}
-                      source={require('../../../../../media/img/teacher_25px.png')}
-                    />
-                    <Text
-                      style={{
-                        fontSize: 14,
-                        fontFamily: 'Roboto',
-                        fontWeight: 'bold',
-                        color: '#fff',
-                      }}>
-                      {item.teacher}
-                    </Text>
-                  </View>
-                  <TouchableOpacity>
-                    <Image
-                      style={{
-                        width: 20,
-                        height: 20,
-                        position: 'absolute',
-                        right: 5,
-                        bottom: 5,
-                      }}
-                      source={item.next}
-                    />
-                  </TouchableOpacity>
-                </View>
-              </View>
-            )}
-            keyExtractor={(item, index) => index.toString()}
-          />
-        )}
-        {selectedDay === '27' && (
-          <FlatList
-            data={getScheduleForSelectedDay(selectedDay)}
-            showsVerticalScrollIndicator={false}
-            style={{height: 355}}
-            renderItem={({item}) => (
-              <View style={{flexDirection: 'row', marginBottom: 20}}>
-                {/* Time */}
-                <View style={{marginLeft: 20}}>
-                  <Text
-                    style={{
-                      fontSize: 16,
-                      fontFamily: 'Roboto',
-                      fontWeight: 'bold',
-                      textAlign: 'center',
-                      color: '#000',
-                    }}>
-                    {item.dateStart}
-                  </Text>
-                  <Text
-                    style={{
-                      fontSize: 16,
-                      fontFamily: 'Roboto',
-                      fontWeight: 'bold',
-                      color: '#949494',
-                    }}>
-                    {item.dateEnd}
-                  </Text>
-                </View>
-                {/* Course */}
-                <View
-                  style={{
-                    width: 270,
-                    marginLeft: 35,
-                    padding: 10,
-                    borderRadius: 10,
-                    backgroundColor: '#FF8E3C',
-                  }}>
-                  <Text
-                    style={{
-                      fontSize: 16,
-                      fontFamily: 'Roboto',
-                      fontWeight: 'bold',
-                      marginLeft: 10,
-                      color: '#fff',
-                    }}>
-                    {item.subject}
-                  </Text>
-                  <Text
-                    style={{
-                      fontSize: 14,
-                      fontFamily: 'Roboto',
-                      fontWeight: 'bold',
-                      marginLeft: 10,
-                      color: '#fff',
-                    }}>
-                    {item.class}
-                  </Text>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      marginLeft: 17,
-                      marginTop: 10,
-                    }}>
-                    <Image
-                      style={{
-                        width: 15,
-                        height: 15,
-                        marginRight: 5,
-                      }}
-                      source={require('../../../../../media/img/home_address_25px.png')}
-                    />
-                    <Text
-                      style={{
-                        fontSize: 14,
-                        fontFamily: 'Roboto',
-                        fontWeight: 'bold',
-                        color: '#fff',
-                      }}>
-                      {item.room}
-                    </Text>
-                  </View>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      marginLeft: 20,
-                      marginTop: 5,
-                    }}>
-                    <Image
-                      style={{width: 20, height: 20}}
-                      source={require('../../../../../media/img/teacher_25px.png')}
-                    />
-                    <Text
-                      style={{
-                        fontSize: 14,
-                        fontFamily: 'Roboto',
-                        fontWeight: 'bold',
-                        color: '#fff',
-                      }}>
-                      {item.teacher}
-                    </Text>
-                  </View>
-                  <TouchableOpacity>
-                    <Image
-                      style={{
-                        width: 20,
-                        height: 20,
-                        position: 'absolute',
-                        right: 5,
-                        bottom: 5,
-                      }}
-                      source={item.next}
-                    />
-                  </TouchableOpacity>
-                </View>
-              </View>
-            )}
-            keyExtractor={(item, index) => index.toString()}
-          />
-        )}
-      </View>
+          </View>
+        </View>
+      )}
     </View>
   );
 };
 
 const TestScheduleScreen = () => {
-  const [selected, setSelected] = useState('');
+  const theme = useContext(themContext);
+  const [selectedLocation, setSelectedLocation] = useState(null);
+  const [isDialogVisible, setDialogVisible] = useState(false);
+  const [lichThi, setLichThi] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  const filteredClasses = classes.filter(c => c.date === selected);
+  const fptPolytechnicLocations = [
+    {label: '7 ngày tới', value: '7-ngay-toi'},
+    {label: '14 ngày tới', value: '14-ngay-toi'},
+    {label: '30 ngày tới', value: '30-ngay-toi'},
+    {label: '90 ngày tới', value: '90-ngay-toi'},
+    {label: '7 ngày trước', value: '7-ngay-truoc'},
+    {label: '14 ngày trước', value: '14-ngay-truoc'},
+    {label: '30 ngày trước', value: '30-ngay-truoc'},
+    {label: '90 ngày trước', value: '90-ngay-truoc'},
+  ];
 
-  const markedDates = {};
-  classes.forEach(c => {
-    markedDates[c.date] = {marked: true, dotColor: 'orange'};
-  });
+  const onGetLichThi = async () => {
+    setLoading(true);
+    const res = await getLichThi();
+    setLichThi(res);
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    onGetLichThi();
+  }, []);
+
+  const handleToggleDialog = () => {
+    setDialogVisible(!isDialogVisible);
+  };
 
   return (
-    <View style={{flex: 1}}>
-      <Calendar
-        style={{
-          borderWidth: 1,
-          borderColor: 'gray',
-          height: 350,
-        }}
-        onDayPress={day => {
-          setSelected(day.dateString);
-        }}
-        markedDates={{
-          ...markedDates,
-          [selected]: {
-            selected: true,
-            disableTouchEvent: true,
-            selectedDotColor: 'orange',
-            selectedColor: '#FF8E3C',
-          },
-        }}
-      />
-      {selected ? (
-        <View style={{flex: 1, padding: 16}}>
-          <Text
-            style={{
-              fontSize: 20,
-              fontWeight: 'bold',
-              marginBottom: 16,
-              textAlign: 'center',
-            }}>
-            {selected}
-          </Text>
-          {filteredClasses.length ? (
-            filteredClasses.map((c, index) => (
-              <View key={index} style={styles.title}>
-                <View
-                  style={{
-                    width: 120,
-                    height: 51,
-                    marginLeft: 10,
-                    borderWidth: 1,
-                    borderColor: 'orange',
-                    borderRadius: 10,
-                    textAlign: 'center',
-                    alignItems: 'center',
-                  }}>
-                  <Text style={{fontSize: 16}}>{c.location}</Text>
-                </View>
-
-                <View
-                  style={{
-                    width: 180,
-                    height: 51,
-                    marginLeft: 10,
-                  }}>
-                  <Text style={{fontSize: 16}} numberOfLines={1}>
-                    {c.title}
-                  </Text>
-                  <Text style={{fontSize: 16}}>{c.idsubject}</Text>
-                </View>
-                <Image
-                  style={{
-                    width: 21,
-                    height: 15,
-                  }}
-                  source={require('../../../../../media/img/back.png')}
-                />
-              </View>
-            ))
-          ) : (
-            <Text>No classes on {selected}</Text>
-          )}
+    <View>
+      {loading ? (
+        <View
+          style={{
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: '100%',
+            paddingTop: 50,
+          }}>
+          <Image
+            style={{width: 100, paddingLeft: 80}}
+            source={require('../../../../../media/img/loading_ly.gif')}
+          />
         </View>
-      ) : null}
+      ) : (
+        <View style={[styles.T, {backgroundColor: theme.backgroundColor}]}>
+          {/* Title Time, Course and arrange */}
+
+          <View
+            style={{
+              flexDirection: 'row',
+              marginTop: 40,
+              marginBottom: 10,
+            }}>
+            <Text
+              style={{
+                fontSize: 16,
+                fontFamily: 'Roboto',
+                fontWeight: 'bold',
+                marginLeft: 10,
+                color: '#949494',
+              }}>
+              Thời gian
+            </Text>
+            <Text
+              style={{
+                fontSize: 16,
+                fontFamily: 'Roboto',
+                fontWeight: 'bold',
+                marginLeft: 30,
+                color: '#949494',
+              }}>
+              Môn học
+            </Text>
+            <TouchableOpacity onPress={handleToggleDialog}>
+              <Image
+                style={{marginLeft: 170}}
+                source={require('../../../../../media/img/sorting_25px.png')}
+              />
+            </TouchableOpacity>
+
+            {/* Add the dialog */}
+            <Modal
+              visible={isDialogVisible}
+              animationType="slide"
+              transparent={true}
+              onRequestClose={handleToggleDialog}>
+              <View style={styles.dialogContainer}>
+                <Text style={styles.dialogTitle}>Chọn thời gian</Text>
+                <Picker
+                  style={{height: 200, width: '100%', marginBottom: 20}}
+                  selectedValue={selectedLocation}
+                  pickerData={fptPolytechnicLocations.map(item => item.label)}
+                  onValueChange={value => {
+                    setSelectedLocation(value);
+                    handleSelectLocation(value);
+                  }}
+                />
+
+                <TouchableOpacity
+                  style={{
+                    backgroundColor: '#FF8E3C',
+                    width: 120,
+                    height: 40,
+                    borderRadius: 20,
+                    marginLeft: 120,
+                    marginTop: 5,
+                    textAlign: 'center',
+                    shadowColor: '#000',
+                    shadowOffset: {
+                      width: 0,
+                      height: 2,
+                    },
+                    shadowOpacity: 0.25,
+                    shadowRadius: 3.84,
+                    elevation: 5,
+                  }}
+                  onPress={handleToggleDialog}>
+                  <Text style={styles.dialogCancelButton}>Hủy</Text>
+                </TouchableOpacity>
+              </View>
+            </Modal>
+          </View>
+          <FlatList
+            data={lichThi}
+            style={{marginTop: 10, height: 530}}
+            showsVerticalScrollIndicator={false}
+            refreshing={loading}
+            onRefresh={() => onGetLichThi()}
+            keyExtractor={item => item._id}
+            renderItem={({item}) => {
+              return (
+                <View style={{flexDirection: 'row', marginBottom: 20}}>
+                  {/* Time */}
+                  <View style={{marginLeft: 20}}>
+                    <Text
+                      style={[
+                        {
+                          fontSize: 16,
+                          fontFamily: 'Roboto',
+                          fontWeight: 'bold',
+                          textAlign: 'center',
+                          color: '#000',
+                        },
+                        {color: theme.color},
+                      ]}>
+                      {item.timeStart}
+                    </Text>
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        fontFamily: 'Roboto',
+                        fontWeight: 'bold',
+                        color: '#949494',
+                      }}>
+                      {item.timeEnd}
+                    </Text>
+                  </View>
+                  {/* Course */}
+                  <View
+                    style={{
+                      width: 270,
+                      marginLeft: 35,
+                      padding: 10,
+                      borderRadius: 10,
+                      borderWidth: 3,
+                      borderColor: '#FF8E3C',
+                    }}>
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        fontFamily: 'Roboto',
+                        marginLeft: 10,
+                        color: '#FF8E3C',
+                      }}>
+                      Môn: {item.name}
+                    </Text>
+                    <Text
+                      style={{
+                        fontSize: 14,
+                        fontFamily: 'Roboto',
+                        marginLeft: 10,
+                        color: '#FF8E3C',
+                      }}>
+                      Ca: {item.ca}
+                    </Text>
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        marginLeft: 15,
+                        marginTop: 10,
+                      }}>
+                      <Image
+                        style={{
+                          width: 20,
+                          height: 20,
+                          marginLeft: 5,
+                        }}
+                        source={require('../../../../../media/img/home_address_25px.png')}
+                      />
+                      <Text
+                        style={{
+                          fontSize: 14,
+                          fontFamily: 'Roboto',
+                          color: '#FF8E3C',
+                          paddingLeft: 10,
+                        }}>
+                        Phòng: {item.diaDiem}
+                      </Text>
+                    </View>
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        marginLeft: 20,
+                        marginTop: 5,
+                      }}>
+                      <Image
+                        style={{width: 20, height: 20}}
+                        source={require('../../../../../media/img/teacher_25px.png')}
+                      />
+                      <Text
+                        style={{
+                          fontSize: 14,
+                          fontFamily: 'Roboto',
+                          color: '#FF8E3C',
+                          paddingLeft: 10,
+                        }}>
+                        Gv: {item.Gv}
+                      </Text>
+                    </View>
+                    <TouchableOpacity>
+                      <Image
+                        style={{
+                          width: 20,
+                          height: 20,
+                          position: 'absolute',
+                          right: 5,
+                          bottom: 5,
+                        }}
+                        source={require('../../../../../media/img/forward_25px.png')}
+                      />
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              );
+            }}
+          />
+        </View>
+      )}
     </View>
   );
 };
@@ -832,6 +803,33 @@ function HomeTabsTop() {
 export default HomeTabsTop;
 
 const styles = StyleSheet.create({
+  dialogContainer: {
+    position: 'absolute',
+    bottom: 0,
+    width: '100%',
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#FF8E3C',
+    paddingVertical: 20,
+    paddingHorizontal: 10,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    elevation: 10,
+  },
+  dialogTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#FF8E3C',
+    textAlign: 'center',
+    marginBottom: 10,
+    textDecorationLine: 'underline',
+  },
+  dialogCancelButton: {
+    fontSize: 16,
+    color: '#fff',
+    textAlign: 'center',
+    marginTop: 10,
+  },
   title: {
     backgroundColor: '#FFFFFF',
     marginBottom: 16,
@@ -843,27 +841,3 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 });
-
-const classes = [
-  {
-    date: '2023-07-25',
-    idsubject: 'MOB402',
-    title: 'Lập trình sever cho Android',
-    location: 'Phòng T311 (Nha T) - Ca 4',
-    time: '15:15 - 17:00',
-  },
-  {
-    date: '2023-07-28',
-    idsubject: 'ENT123',
-    title: 'Tiếng Anh 3',
-    location: 'Phòng T311 (Nha T) - Ca 5',
-    time: '17:35 - 19:30',
-  },
-  {
-    date: '2023-07-31',
-    idsubject: 'MOB401',
-    title: 'Lập trình Game 2D nâng cao',
-    location: 'Phòng T1001 (Nha T) - Ca 4',
-    time: '10:00 AM - 12:00 PM',
-  },
-];
