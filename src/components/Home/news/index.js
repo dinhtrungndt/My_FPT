@@ -127,15 +127,18 @@ const NewsScreens = props => {
       {/* header */}
       <View style={styles.header}>
         {/* Tài khoản */}
-        <Image
-          style={{
-            backgroundColor: '#fff',
-            width: 50,
-            height: 50,
-            borderRadius: 50 / 2,
-            marginLeft: -10,
-          }}
-          source={{uri: user.user.img}}></Image>
+        <TouchableOpacity onPress={() => navigation.navigate('EditScreens')}>
+          <Image
+            style={{
+              backgroundColor: '#fff',
+              width: 50,
+              height: 50,
+              borderRadius: 50 / 2,
+              marginLeft: -10,
+            }}
+            source={{uri: user.user.img}}></Image>
+        </TouchableOpacity>
+
         <View>
           {/* Hello bee */}
           <Text

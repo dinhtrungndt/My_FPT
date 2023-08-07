@@ -3,34 +3,6 @@ import {getMonHoc} from '../../homeService';
 export const DataTNHori = [
   {
     thu: 'HAI',
-    ngay: '31',
-  },
-  {
-    thu: 'BA',
-    ngay: '1',
-  },
-  {
-    thu: 'TƯ',
-    ngay: '2',
-  },
-  {
-    thu: 'NĂM',
-    ngay: '3',
-  },
-  {
-    thu: 'SÁU',
-    ngay: '4',
-  },
-  {
-    thu: 'BẢY',
-    ngay: '5',
-  },
-  {
-    thu: 'CN',
-    ngay: '6',
-  },
-  {
-    thu: 'HAI',
     ngay: '7',
   },
   {
@@ -60,6 +32,30 @@ export const DataTNHori = [
   {
     thu: 'HAI',
     ngay: '14',
+  },
+  {
+    thu: 'BA',
+    ngay: '15',
+  },
+  {
+    thu: 'TƯ',
+    ngay: '16',
+  },
+  {
+    thu: 'NĂM',
+    ngay: '17',
+  },
+  {
+    thu: 'SÁU',
+    ngay: '18',
+  },
+  {
+    thu: 'BẢY',
+    ngay: '19',
+  },
+  {
+    thu: 'CN',
+    ngay: '20',
   },
 ];
 
@@ -102,7 +98,7 @@ const DataLHHAI = [
   },
 ];
 
-DataTNHori.find(item => item.ngay === '4').dataLH = DataLHHAI;
+DataTNHori.find(item => item.ngay === '7').dataLH = DataLHHAI;
 
 const DataLHBA = [
   {
@@ -125,7 +121,7 @@ const DataLHBA = [
   },
 ];
 
-DataTNHori.find(item => item.ngay === '5').dataLH = DataLHBA;
+DataTNHori.find(item => item.ngay === '8').dataLH = DataLHBA;
 
 const DataLHTU = [
   {
@@ -166,7 +162,7 @@ const DataLHTU = [
   },
 ];
 
-DataTNHori.find(item => item.ngay === '6').dataLH = DataLHTU;
+DataTNHori.find(item => item.ngay === '9').dataLH = DataLHTU;
 
 const DataLHNAM = [
   {
@@ -180,4 +176,4 @@ const DataLHNAM = [
   },
 ];
 
-DataTNHori.find(item => item.ngay === '7').dataLH = DataLHNAM;
+DataTNHori.find(item => item.ngay === '10').dataLH = DataLHNAM;

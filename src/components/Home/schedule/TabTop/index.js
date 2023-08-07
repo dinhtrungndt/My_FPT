@@ -78,12 +78,12 @@ const ScheduleScreen = () => {
   };
 
   useEffect(() => {
-    setSelectedDay('3');
+    setSelectedDay('7');
     setCurrentDate(getCurrentDate());
   }, []);
 
   const handleTodayButtonClick = () => {
-    setSelectedDay('3');
+    setSelectedDay('7');
   };
 
   const [loading, setLoading] = useState(false);
