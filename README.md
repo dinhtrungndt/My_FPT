@@ -1,3 +1,4 @@
+# Student application 👨🏻‍🎓
 # This is an application for students. This application helps students update school news, timetables and provide student support when needed. Notice of attendance and service registration, consultation...
 
 # Brief description of the process:
