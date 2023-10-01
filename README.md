@@ -1,10 +1,9 @@
-# Student application 👨🏻‍🎓
-# This is an application for students. This application helps students update school news, timetables and provide student support when needed. Notice of attendance and service registration, consultation...
+# This is an application for students. This application helps students update school news, timetables and provide student support when needed. Notice of attendance and service registration, consultation... 👨🏻‍🎓👨🏻‍💻📝
 
-# Brief description of the process:
+# Brief description of the process 📱:
 ![My_FPT](https://github.com/dinhtrungndt/My_FPT/assets/127390593/ae1c4cf0-8b97-4634-84e7-562fb4b441cf)
 
-# Main tabs in the application:
+# Main tabs in the app 📱:
 
 # Splash:
 ![SplashScreen](https://github.com/dinhtrungndt/My_FPT/assets/127390593/06fc4449-fbe2-4930-9e95-1cac90e35b15)
